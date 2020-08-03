@@ -2,6 +2,7 @@
     <div>
         <div
             v-hotkey="keymap"
+            v-focus
             class="context-item"
             :class="{
                 'is-active': active,
@@ -16,9 +17,8 @@
 </template>
 
 <script>
-import hotKey from 'v-hotkey';
+import { directive } from 'v-hotkey';
 import * as utils from '../utils/index.ts';
-
 export default {
     name: 'context-item',
     props: {
@@ -53,9 +53,10 @@ export default {
             }
             return obj;
         },
+
     },
     directives: {
-        hotKey,
+        hotkey: directive,
     },
     methods: {
         handleClick(event) {
