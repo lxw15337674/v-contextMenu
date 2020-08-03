@@ -7500,14 +7500,89 @@
   //
   //
   //
-
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
   var script = {
-      name: 'App',
-      data: function () {
-          return {};
-      },
-      methods: {},
-      mounted() {},
+    name: 'App',
+    data: function data() {
+      return {
+        contextMenu: [{
+          label: '复制',
+          def: this.copy,
+          hotkey: 'ctrl+c'
+        }, {
+          label: '粘贴',
+          def: 'paste',
+          hotkey: 'ctrl+v'
+        } // {
+        //     label: '剪切',
+        //     def: 'cut',
+        //     hotkey: 'ctrl+x',
+        // },
+        // {
+        //     label: '撤销',
+        //     def: 'reverse',
+        //     hotkey: 'ctrl+z',
+        // },
+        // {
+        //     label: '重做',
+        //     def: 'reverse',
+        //     hotkey: 'ctrl+y',
+        //     disabled: false,
+        // },
+        // {
+        //     label: '清空选中区域',
+        //     def: 'clear',
+        //     divided: true,
+        //     hotkey: 'delete',
+        // },
+        // {
+        //     label: '上方插入一行',
+        //     def: 'insertRowUp',
+        // },
+        // {
+        //     label: '下方插入一行',
+        //     def: 'insertRowDown',
+        // },
+        // {
+        //     label: '删除所在行',
+        //     def: 'removeRows',
+        //     divided: true,
+        // },
+        // {
+        //     label: '左边插入一列',
+        //     def: 'insertColLeft',
+        // },
+        // {
+        //     label: '右边插入一列',
+        //     def: 'insertColRight',
+        // },
+        // {
+        //     label: '删除所在列',
+        //     def: 'removeCols',
+        // },
+        ]
+      };
+    },
+    methods: {
+      copy: function copy() {
+        console.log('copy');
+      }
+    },
+    mounted: function mounted() {}
   };
 
   function normalizeComponent(template, style, script, scopeId, isFunctionalTemplate, moduleIdentifier /* server only */, shadowMode, createInjector, createInjectorSSR, createInjectorShadow) {
@@ -7585,6 +7660,59 @@
       return script;
   }
 
+  const isOldIE = typeof navigator !== 'undefined' &&
+      /msie [6-9]\\b/.test(navigator.userAgent.toLowerCase());
+  function createInjector(context) {
+      return (id, style) => addStyle(id, style);
+  }
+  let HEAD;
+  const styles = {};
+  function addStyle(id, css) {
+      const group = isOldIE ? css.media || 'default' : id;
+      const style = styles[group] || (styles[group] = { ids: new Set(), styles: [] });
+      if (!style.ids.has(id)) {
+          style.ids.add(id);
+          let code = css.source;
+          if (css.map) {
+              // https://developer.chrome.com/devtools/docs/javascript-debugging
+              // this makes source maps inside style tags work properly in Chrome
+              code += '\n/*# sourceURL=' + css.map.sources[0] + ' */';
+              // http://stackoverflow.com/a/26603875
+              code +=
+                  '\n/*# sourceMappingURL=data:application/json;base64,' +
+                      btoa(unescape(encodeURIComponent(JSON.stringify(css.map)))) +
+                      ' */';
+          }
+          if (!style.element) {
+              style.element = document.createElement('style');
+              style.element.type = 'text/css';
+              if (css.media)
+                  style.element.setAttribute('media', css.media);
+              if (HEAD === undefined) {
+                  HEAD = document.head || document.getElementsByTagName('head')[0];
+              }
+              HEAD.appendChild(style.element);
+          }
+          if ('styleSheet' in style.element) {
+              style.styles.push(code);
+              style.element.styleSheet.cssText = style.styles
+                  .filter(Boolean)
+                  .join('\n');
+          }
+          else {
+              const index = style.ids.size - 1;
+              const textNode = document.createTextNode(code);
+              const nodes = style.element.childNodes;
+              if (nodes[index])
+                  style.element.removeChild(nodes[index]);
+              if (nodes.length)
+                  style.element.insertBefore(textNode, nodes[index]);
+              else
+                  style.element.appendChild(textNode);
+          }
+      }
+  }
+
   /* script */
   const __vue_script__ = script;
 
@@ -7596,7 +7724,43 @@
     return _c(
       "div",
       { staticClass: "app" },
-      [_c("div"), _vm._v(" "), _c("test")],
+      [
+        _c(
+          "contextMenu",
+          [
+            _c("div", { staticClass: "content" }),
+            _vm._v(" "),
+            _c(
+              "template",
+              { slot: "contentMenu" },
+              _vm._l(_vm.contextMenu, function(menuItem) {
+                return _c(
+                  "context-item",
+                  {
+                    key: menuItem.label,
+                    attrs: {
+                      divided: menuItem.divided,
+                      disabled: menuItem.disabled,
+                      active: menuItem.active,
+                      def: menuItem.def,
+                      hotkey: menuItem.hotkey
+                    }
+                  },
+                  [
+                    _c("span", {}, [_vm._v(_vm._s(menuItem.label))]),
+                    _vm._v(" "),
+                    _c("span", { staticClass: "fr" }, [
+                      _vm._v(_vm._s(_vm._f("hotKeyFilter")(menuItem.hotkey)))
+                    ])
+                  ]
+                )
+              }),
+              1
+            )
+          ],
+          2
+        )
+      ],
       1
     )
   };
@@ -7604,15 +7768,17 @@
   __vue_render__._withStripped = true;
 
     /* style */
-    const __vue_inject_styles__ = undefined;
+    const __vue_inject_styles__ = function (inject) {
+      if (!inject) return
+      inject("data-v-f1d5190c_0", { source: ".content[data-v-f1d5190c] {\n  height: 100px;\n  border: 1px solid #f00;\n  width: 100px;\n}\n", map: {"version":3,"sources":["C:\\Users\\lxw\\Desktop\\codework\\v-contextMenu\\example\\App.vue","App.vue"],"names":[],"mappings":"AAkGA;EACA,aAAA;EACA,sBAAA;EACA,YAAA;ACjGA","file":"App.vue","sourcesContent":["<template>\n    <div class=\"app\">\n        <contextMenu>\n            <div class=\"content\"></div>\n            <template slot=\"contentMenu\">\n                <context-item\n                    v-for=\"menuItem in contextMenu\"\n                    :key=\"menuItem.label\"\n                    :divided=\"menuItem.divided\"\n                    :disabled=\"menuItem.disabled\"\n                    :active=\"menuItem.active\"\n                    :def=\"menuItem.def\"\n                    :hotkey=\"menuItem.hotkey\"\n                >\n                    <span class=\"\">{{ menuItem.label }}</span>\n                    <span class=\"fr\">{{ menuItem.hotkey | hotKeyFilter }}</span>\n                </context-item>\n            </template>\n        </contextMenu>\n    </div>\n</template>\n\n<script>\nexport default {\n    name: 'App',\n    data: function () {\n        return {\n            contextMenu: [\n                {\n                    label: '复制',\n                    def: this.copy,\n                    hotkey: 'ctrl+c',\n                },\n                {\n                    label: '粘贴',\n                    def: 'paste',\n                    hotkey: 'ctrl+v',\n                },\n                // {\n                //     label: '剪切',\n                //     def: 'cut',\n                //     hotkey: 'ctrl+x',\n                // },\n                // {\n                //     label: '撤销',\n                //     def: 'reverse',\n                //     hotkey: 'ctrl+z',\n                // },\n                // {\n                //     label: '重做',\n                //     def: 'reverse',\n                //     hotkey: 'ctrl+y',\n                //     disabled: false,\n                // },\n                // {\n                //     label: '清空选中区域',\n                //     def: 'clear',\n                //     divided: true,\n                //     hotkey: 'delete',\n                // },\n                // {\n                //     label: '上方插入一行',\n                //     def: 'insertRowUp',\n                // },\n                // {\n                //     label: '下方插入一行',\n                //     def: 'insertRowDown',\n                // },\n                // {\n                //     label: '删除所在行',\n                //     def: 'removeRows',\n                //     divided: true,\n                // },\n                // {\n                //     label: '左边插入一列',\n                //     def: 'insertColLeft',\n                // },\n                // {\n                //     label: '右边插入一列',\n                //     def: 'insertColRight',\n                // },\n                // {\n                //     label: '删除所在列',\n                //     def: 'removeCols',\n                // },\n            ],\n        };\n    },\n    methods: {\n        copy() {\n            console.log('copy');\n        },\n    },\n    mounted() {},\n};\n</script>\n\n<style lang=\"stylus\" scoped>\n.content\n    height 100px\n    border 1px solid red\n    width 100px\n</style>\n",".content {\n  height: 100px;\n  border: 1px solid #f00;\n  width: 100px;\n}\n"]}, media: undefined });
+
+    };
     /* scoped */
-    const __vue_scope_id__ = "data-v-15a3d272";
+    const __vue_scope_id__ = "data-v-f1d5190c";
     /* module identifier */
     const __vue_module_identifier__ = undefined;
     /* functional template */
     const __vue_is_functional_template__ = false;
-    /* style inject */
-    
     /* style inject SSR */
     
     /* style inject shadow dom */
@@ -7627,26 +7793,551 @@
       __vue_is_functional_template__,
       __vue_module_identifier__,
       false,
-      undefined,
+      createInjector,
       undefined,
       undefined
     );
 
+  function unwrapExports (x) {
+  	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
+  }
+
+  function createCommonjsModule(fn, basedir, module) {
+  	return module = {
+  	  path: basedir,
+  	  exports: {},
+  	  require: function (path, base) {
+        return commonjsRequire(path, (base === undefined || base === null) ? module.path : base);
+      }
+  	}, fn(module, module.exports), module.exports;
+  }
+
+  function commonjsRequire () {
+  	throw new Error('Dynamic requires are not currently supported by @rollup/plugin-commonjs');
+  }
+
+  var vHotkey_common = createCommonjsModule(function (module) {
+  module.exports =
+  /******/ (function(modules) { // webpackBootstrap
+  /******/ 	// The module cache
+  /******/ 	var installedModules = {};
+  /******/
+  /******/ 	// The require function
+  /******/ 	function __webpack_require__(moduleId) {
+  /******/
+  /******/ 		// Check if module is in cache
+  /******/ 		if(installedModules[moduleId]) {
+  /******/ 			return installedModules[moduleId].exports;
+  /******/ 		}
+  /******/ 		// Create a new module (and put it into the cache)
+  /******/ 		var module = installedModules[moduleId] = {
+  /******/ 			i: moduleId,
+  /******/ 			l: false,
+  /******/ 			exports: {}
+  /******/ 		};
+  /******/
+  /******/ 		// Execute the module function
+  /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+  /******/
+  /******/ 		// Flag the module as loaded
+  /******/ 		module.l = true;
+  /******/
+  /******/ 		// Return the exports of the module
+  /******/ 		return module.exports;
+  /******/ 	}
+  /******/
+  /******/
+  /******/ 	// expose the modules object (__webpack_modules__)
+  /******/ 	__webpack_require__.m = modules;
+  /******/
+  /******/ 	// expose the module cache
+  /******/ 	__webpack_require__.c = installedModules;
+  /******/
+  /******/ 	// define getter function for harmony exports
+  /******/ 	__webpack_require__.d = function(exports, name, getter) {
+  /******/ 		if(!__webpack_require__.o(exports, name)) {
+  /******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+  /******/ 		}
+  /******/ 	};
+  /******/
+  /******/ 	// define __esModule on exports
+  /******/ 	__webpack_require__.r = function(exports) {
+  /******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+  /******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+  /******/ 		}
+  /******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+  /******/ 	};
+  /******/
+  /******/ 	// create a fake namespace object
+  /******/ 	// mode & 1: value is a module id, require it
+  /******/ 	// mode & 2: merge all properties of value into the ns
+  /******/ 	// mode & 4: return value when already ns object
+  /******/ 	// mode & 8|1: behave like require
+  /******/ 	__webpack_require__.t = function(value, mode) {
+  /******/ 		if(mode & 1) value = __webpack_require__(value);
+  /******/ 		if(mode & 8) return value;
+  /******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+  /******/ 		var ns = Object.create(null);
+  /******/ 		__webpack_require__.r(ns);
+  /******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+  /******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+  /******/ 		return ns;
+  /******/ 	};
+  /******/
+  /******/ 	// getDefaultExport function for compatibility with non-harmony modules
+  /******/ 	__webpack_require__.n = function(module) {
+  /******/ 		var getter = module && module.__esModule ?
+  /******/ 			function getDefault() { return module['default']; } :
+  /******/ 			function getModuleExports() { return module; };
+  /******/ 		__webpack_require__.d(getter, 'a', getter);
+  /******/ 		return getter;
+  /******/ 	};
+  /******/
+  /******/ 	// Object.prototype.hasOwnProperty.call
+  /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+  /******/
+  /******/ 	// __webpack_public_path__
+  /******/ 	__webpack_require__.p = "";
+  /******/
+  /******/
+  /******/ 	// Load entry module and return exports
+  /******/ 	return __webpack_require__(__webpack_require__.s = "fb15");
+  /******/ })
+  /************************************************************************/
+  /******/ ({
+
+  /***/ "f6fd":
+  /***/ (function(module, exports) {
+
+  // document.currentScript polyfill by Adam Miller
+
+  // MIT license
+
+  (function(document){
+    var currentScript = "currentScript",
+        scripts = document.getElementsByTagName('script'); // Live NodeList collection
+
+    // If browser needs currentScript polyfill, add get currentScript() to the document object
+    if (!(currentScript in document)) {
+      Object.defineProperty(document, currentScript, {
+        get: function(){
+
+          // IE 6-10 supports script readyState
+          // IE 10+ support stack trace
+          try { throw new Error(); }
+          catch (err) {
+
+            // Find the second match for the "at" string to get file src url from stack.
+            // Specifically works with the format of stack traces in IE.
+            var i, res = ((/.*at [^\(]*\((.*):.+:.+\)$/ig).exec(err.stack) || [false])[1];
+
+            // For all scripts on the page, if src matches or if ready state is interactive, return the script tag
+            for(i in scripts){
+              if(scripts[i].src == res || scripts[i].readyState == "interactive"){
+                return scripts[i];
+              }
+            }
+
+            // If no match, return null
+            return null;
+          }
+        }
+      });
+    }
+  })(document);
+
+
+  /***/ }),
+
+  /***/ "fb15":
+  /***/ (function(module, __webpack_exports__, __webpack_require__) {
+  __webpack_require__.r(__webpack_exports__);
+
+  // CONCATENATED MODULE: ./node_modules/@vue/cli-service/lib/commands/build/setPublicPath.js
+  // This file is imported into lib/wc client bundles.
+
+  if (typeof window !== 'undefined') {
+    {
+      __webpack_require__("f6fd");
+    }
+
+    var i;
+    if ((i = window.document.currentScript) && (i = i.src.match(/(.+\/)[^/]+\.js(\?.*)?$/))) {
+      __webpack_require__.p = i[1]; // eslint-disable-line
+    }
+  }
+
+  // CONCATENATED MODULE: ./src/keycodes/aliases.js
+  /* harmony default export */ var aliases = ({
+    windows: 91,
+    '⇧': 16,
+    '⌥': 18,
+    '⌃': 17,
+    '⌘': 91,
+    ctl: 17,
+    control: 17,
+    option: 18,
+    pause: 19,
+    "break": 19,
+    caps: 20,
+    "return": 13,
+    escape: 27,
+    spc: 32,
+    pgup: 33,
+    pgdn: 34,
+    ins: 45,
+    del: 46,
+    cmd: 91
+  });
+  // CONCATENATED MODULE: ./src/keycodes/functionkeys.js
+  /* harmony default export */ var functionkeys = ({
+    f1: 112,
+    f2: 113,
+    f3: 114,
+    f4: 115,
+    f5: 116,
+    f6: 117,
+    f7: 118,
+    f8: 119,
+    f9: 120,
+    f10: 121,
+    f11: 122,
+    f12: 123
+  });
+  // CONCATENATED MODULE: ./src/keycodes/numpad.js
+  /* harmony default export */ var numpad = ({
+    'numpad *': 106,
+    // 'numpad +': 107,
+    'numpad +': 43,
+    'numpad add': 43,
+    // as a trick
+    'numpad -': 109,
+    'numpad .': 110,
+    'numpad /': 111,
+    'num lock': 144,
+    'numpad 0': 96,
+    'numpad 1': 97,
+    'numpad 2': 98,
+    'numpad 3': 99,
+    'numpad 4': 100,
+    'numpad 5': 101,
+    'numpad 6': 102,
+    'numpad 7': 103,
+    'numpad 8': 104,
+    'numpad 9': 105
+  });
+  // CONCATENATED MODULE: ./src/keycodes/lowercase.js
+  /* harmony default export */ var lowercase = ({
+    a: 65,
+    b: 66,
+    c: 67,
+    d: 68,
+    e: 69,
+    f: 70,
+    g: 71,
+    h: 72,
+    i: 73,
+    j: 74,
+    k: 75,
+    l: 76,
+    m: 77,
+    n: 78,
+    o: 79,
+    p: 80,
+    q: 81,
+    r: 82,
+    s: 83,
+    t: 84,
+    u: 85,
+    v: 86,
+    w: 87,
+    x: 88,
+    y: 89,
+    z: 90
+  });
+  // CONCATENATED MODULE: ./src/keycodes/codes.js
+  function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+  function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+  function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+
+  /* harmony default export */ var codes = (_objectSpread({
+    backspace: 8,
+    tab: 9,
+    enter: 13,
+    shift: 16,
+    ctrl: 17,
+    alt: 18,
+    'pause/break': 19,
+    'caps lock': 20,
+    esc: 27,
+    space: 32,
+    'page up': 33,
+    'page down': 34,
+    end: 35,
+    home: 36,
+    left: 37,
+    up: 38,
+    right: 39,
+    down: 40,
+    // 'add': 43,
+    insert: 45,
+    "delete": 46,
+    command: 91,
+    'left command': 91,
+    'right command': 93,
+    'scroll lock': 145,
+    'my computer': 182,
+    'my calculator': 183,
+    ';': 186,
+    '=': 187,
+    ',': 188,
+    '-': 189,
+    '.': 190,
+    '/': 191,
+    '`': 192,
+    '[': 219,
+    '\\': 220,
+    ']': 221,
+    "'": 222
+  }, lowercase, {}, numpad, {}, functionkeys));
+  // CONCATENATED MODULE: ./src/keycodes/index.js
+
+
+
+  var noop = function noop() {};
+
+  var getKeyMap = function getKeyMap(keymap, alias) {
+    return Object.keys(keymap).map(function (input) {
+      var result = {};
+      var _keymap$input = keymap[input],
+          keyup = _keymap$input.keyup,
+          keydown = _keymap$input.keydown;
+      input.replace('numpad +', 'numpad add').split('+').forEach(function (keyName) {
+        switch (keyName.toLowerCase()) {
+          case 'ctrl':
+          case 'alt':
+          case 'shift':
+          case 'meta':
+            result[keyName] = true;
+            break;
+
+          default:
+            result.keyCode = alias[keyName] || keycodes_searchKeyCode(keyName);
+        }
+      });
+      result.callback = {
+        keydown: keydown || (keyup ? noop : keymap[input]),
+        keyup: keyup || noop
+      };
+      return result;
+    });
+  };
+
+  var keycodes_searchKeyCode = function searchKeyCode(key) {
+    if (!key) return; // Keyboard Events
+
+    key = hasKeyCode(key) || String(key);
+    return codes[key.toLowerCase()] || aliases[key.toLowerCase()] || returnCharCode(key);
+  };
+
+  var returnCharCode = function returnCharCode(key) {
+    return key.length === 1 ? key.charCodeAt(0) : undefined;
+  };
+
+  var isPlainObject = function isPlainObject(obj) {
+    return Object.prototype.toString.call(obj) === '[object Object]';
+  };
+
+  var hasKeyCode = function hasKeyCode(key) {
+    return !isPlainObject(key) ? key : key.which || key.keyCode || key.charCode || false;
+  };
+
+
+  // CONCATENATED MODULE: ./src/main.js
+
+
+  function bindEvent(el, _ref, alias) {
+    var value = _ref.value,
+        modifiers = _ref.modifiers;
+    el._keymap = getKeyMap(value, alias);
+
+    el._keyHandler = function (e) {
+      if (modifiers.prevent) e.preventDefault();
+
+      if (modifiers.stop) {
+        var _document$activeEleme = document.activeElement,
+            nodeName = _document$activeEleme.nodeName,
+            isContentEditable = _document$activeEleme.isContentEditable;
+        if (isContentEditable) return;
+
+        switch (nodeName) {
+          case 'INPUT':
+          case 'TEXTAREA':
+          case 'SELECT':
+            return;
+        }
+      }
+
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = el._keymap[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var hotkey = _step.value;
+          var callback = hotkey.keyCode === e.keyCode && !!hotkey.ctrl === e.ctrlKey && !!hotkey.alt === e.altKey && !!hotkey.shift === e.shiftKey && !!hotkey.meta === e.metaKey && hotkey.callback[e.type];
+          callback && callback(e);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+            _iterator["return"]();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+    };
+
+    document.addEventListener('keydown', el._keyHandler);
+    document.addEventListener('keyup', el._keyHandler);
+  }
+
+  function unbindEvent(el) {
+    document.removeEventListener('keydown', el._keyHandler);
+    document.removeEventListener('keyup', el._keyHandler);
+  }
+
+
+  // CONCATENATED MODULE: ./src/index.js
+
+
+  var src_buildDirective = function buildDirective() {
+    var alias = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    return {
+      bind: function bind(el, binding) {
+        bindEvent(el, binding, alias);
+      },
+      componentUpdated: function componentUpdated(el, binding) {
+        if (binding.value !== binding.oldValue) {
+          unbindEvent(el);
+          bindEvent(el, binding, alias);
+        }
+      },
+      unbind: unbindEvent
+    };
+  };
+
+  var src_plugin = {
+    install: function install(Vue) {
+      var alias = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      Vue.directive('hotkey', src_buildDirective(alias));
+    },
+    directive: src_buildDirective()
+  };
+  /* harmony default export */ var src = (src_plugin);
+  // CONCATENATED MODULE: ./node_modules/@vue/cli-service/lib/commands/build/entry-lib.js
+
+
+  /* harmony default export */ var entry_lib = __webpack_exports__["default"] = (src);
+
+
+
+  /***/ })
+
+  /******/ });
+
+  });
+
+  var hotKey = /*@__PURE__*/unwrapExports(vHotkey_common);
+
+  function typeJudgment(variable) {
+      return Object.prototype.toString.call(variable).split(' ')[1].slice(0, -1).toLowerCase();
+  }
+
+  function numToPx(number) {
+      if (number) {
+          return number + "px";
+      }
+  }
+
+  function placement(menuSize, cursorPosition, windowPosition) {
+      var position = cursorPosition;
+      if (position > windowPosition / 2) {
+          position = cursorPosition - menuSize;
+      }
+      return numToPx(position);
+  }
+
   //
   var script$1 = {
-      name: 'virtual-scroller-table',
-      props: {},
-      components: {},
-      data() {
-          return {
-              test: '123',
-          };
+    name: 'context-item',
+    props: {
+      divided: {
+        type: Boolean,
+        "default": false
       },
-      methods: {},
+      disabled: {
+        type: Boolean,
+        "default": false
+      },
+      active: {
+        type: Boolean,
+        "default": false
+      },
+      autoHide: {
+        type: Boolean,
+        "default": true
+      },
+      def: {
+        type: Function
+      },
+      hotkey: {
+        type: String
+      }
+    },
+    computed: {
+      keymap: function keymap() {
+        var obj = {};
 
-      watch: {},
-      computed: {},
-      mounted() {},
+        if (this.hotkey) {
+          obj[this.hotkey] = this.def;
+        }
+
+        return obj;
+      }
+    },
+    directives: {
+      hotKey: hotKey
+    },
+    methods: {
+      handleClick: function handleClick(event) {
+        debugger;
+        var contextMenu = this.$parent.node.context;
+
+        if (!this.disabled) {
+          if (typeJudgment(this.def) === 'function') {
+            this.def();
+          }
+
+          if (this.autoHide) {
+            contextMenu.closeContextMenu();
+          }
+
+          this.$emit('click', this, event);
+        }
+      }
+    }
   };
 
   /* script */
@@ -7657,21 +8348,47 @@
     var _vm = this;
     var _h = _vm.$createElement;
     var _c = _vm._self._c || _h;
-    return _c("div", [_vm._v("\n    test\n")])
+    return _c("div", [
+      _c(
+        "div",
+        {
+          directives: [
+            {
+              name: "hotkey",
+              rawName: "v-hotkey",
+              value: _vm.keymap,
+              expression: "keymap"
+            }
+          ],
+          staticClass: "context-item",
+          class: {
+            "is-active": _vm.active,
+            "is-disabled": _vm.disabled
+          },
+          on: { click: _vm.handleClick }
+        },
+        [_vm._t("default")],
+        2
+      ),
+      _vm._v(" "),
+      _vm.divided ? _c("div", { staticClass: "divided" }) : _vm._e()
+    ])
   };
   var __vue_staticRenderFns__$1 = [];
   __vue_render__$1._withStripped = true;
 
     /* style */
-    const __vue_inject_styles__$1 = undefined;
+    const __vue_inject_styles__$1 = function (inject) {
+      if (!inject) return
+      inject("data-v-10c32ec6_0", { source: ".context-item[data-v-10c32ec6] {\n  padding: 10px 16px;\n  cursor: pointer;\n  font-size: 14px;\n  min-width: 280px;\n}\n.context-item[data-v-10c32ec6]:not(.is-disabled):hover {\n  background-color: #f5f5f5;\n}\n.is-disabled[data-v-10c32ec6] {\n  color: rgba(0,0,0,0.1);\n  cursor: not-allowed;\n}\n.is-active[data-v-10c32ec6] {\n  background-color: #46a0fc;\n  color: #fff;\n}\n.divided[data-v-10c32ec6] {\n  height: 1px;\n  width: 100%;\n  margin: 6px 1px;\n  background: rgba(0,0,0,0.1);\n}\n", map: {"version":3,"sources":["C:\\Users\\lxw\\Desktop\\codework\\v-contextMenu\\src\\components\\context-item.vue","context-item.vue"],"names":[],"mappings":"AA+EA;EACA,kBAAA;EACA,eAAA;EACA,eAAA;EACA,gBAAA;AC9EA;AD+EA;EACA,yBAAA;AC7EA;AD8EA;EACA,sBAAA;EACA,mBAAA;AC5EA;AD6EA;EACA,yBAAA;EACA,WAAA;AC3EA;AD4EA;EACA,WAAA;EACA,WAAA;EACA,eAAA;EACA,2BAAA;AC1EA","file":"context-item.vue","sourcesContent":["<template>\r\n    <div>\r\n        <div\r\n            v-hotkey=\"keymap\"\r\n            class=\"context-item\"\r\n            :class=\"{\r\n                'is-active': active,\r\n                'is-disabled': disabled,\r\n            }\"\r\n            @click=\"handleClick\"\r\n        >\r\n            <slot></slot>\r\n        </div>\r\n        <div class=\"divided\" v-if=\"divided\"></div>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\nimport hotKey from 'v-hotkey';\r\nimport * as utils from '../utils/index.ts';\r\n\r\nexport default {\r\n    name: 'context-item',\r\n    props: {\r\n        divided: {\r\n            type: Boolean,\r\n            default: false,\r\n        },\r\n        disabled: {\r\n            type: Boolean,\r\n            default: false,\r\n        },\r\n        active: {\r\n            type: Boolean,\r\n            default: false,\r\n        },\r\n        autoHide: {\r\n            type: Boolean,\r\n            default: true,\r\n        },\r\n        def: {\r\n            type: Function,\r\n        },\r\n        hotkey: {\r\n            type: String,\r\n        },\r\n    },\r\n    computed: {\r\n        keymap() {\r\n            let obj = {};\r\n            if (this.hotkey) {\r\n                obj[this.hotkey] = this.def;\r\n            }\r\n            return obj;\r\n        },\r\n    },\r\n    directives: {\r\n        hotKey,\r\n    },\r\n    methods: {\r\n        handleClick(event) {\r\n            debugger;\r\n            let contextMenu = this.$parent.node.context;\r\n            if (!this.disabled) {\r\n                if (utils.varType(this.def) === 'function') {\r\n                    this.def();\r\n                }\r\n                if (this.autoHide) {\r\n                    contextMenu.closeContextMenu();\r\n                }\r\n                this.$emit('click', this, event);\r\n            }\r\n        },\r\n    },\r\n};\r\n</script>\r\n\r\n<style lang=\"stylus\" scoped>\r\nborderColor = rgba(0,0,0,0.1)\r\n.context-item\r\n    padding: 10px 16px;\r\n    cursor: pointer;\r\n    font-size 14px\r\n    min-width 280px\r\n    &:not(.is-disabled):hover\r\n        background-color: #f5f5f5\r\n.is-disabled\r\n    color:borderColor\r\n    cursor: not-allowed\r\n.is-active\r\n  background-color:#46a0fc\r\n  color white\r\n.divided\r\n    height: 1px;\r\n    width: 100%;\r\n    margin: 6px 1px;\r\n    background: borderColor\r\n</style>\r\n",".context-item {\n  padding: 10px 16px;\n  cursor: pointer;\n  font-size: 14px;\n  min-width: 280px;\n}\n.context-item:not(.is-disabled):hover {\n  background-color: #f5f5f5;\n}\n.is-disabled {\n  color: rgba(0,0,0,0.1);\n  cursor: not-allowed;\n}\n.is-active {\n  background-color: #46a0fc;\n  color: #fff;\n}\n.divided {\n  height: 1px;\n  width: 100%;\n  margin: 6px 1px;\n  background: rgba(0,0,0,0.1);\n}\n"]}, media: undefined });
+
+    };
     /* scoped */
-    const __vue_scope_id__$1 = "data-v-a302f228";
+    const __vue_scope_id__$1 = "data-v-10c32ec6";
     /* module identifier */
     const __vue_module_identifier__$1 = undefined;
     /* functional template */
     const __vue_is_functional_template__$1 = false;
-    /* style inject */
-    
     /* style inject SSR */
     
     /* style inject shadow dom */
@@ -7686,23 +8403,188 @@
       __vue_is_functional_template__$1,
       __vue_module_identifier__$1,
       false,
-      undefined,
+      createInjector,
       undefined,
       undefined
     );
 
-  const plugin = {
-      install(Vue, options) {
-          const finalOptions = Object.assign({ refix: '', options });
-          Vue.component(`test`, __vue_component__$1);
+  var script$2 = {
+    name: 'context-menu',
+    data: function data() {
+      return {
+        visible: false
+      };
+    },
+    props: {
+      theme: {
+        type: String,
+        "default": 'light',
+        validator: function validator(value) {
+          return ['dark', 'light'].indexOf(value) !== -1;
+        }
       },
+      disabled: {
+        type: Boolean,
+        "default": false
+      }
+    },
+    methods: {
+      openContextMenu: function openContextMenu(evt) {
+        var _this = this;
+
+        evt.preventDefault();
+
+        if (this.visible) {
+          this.closeContextMenu();
+        } else {
+          if (this.disabled) return;
+          this.visible = true;
+          this.$nextTick(function () {
+            var contextMenu = _this.$refs.contextMenu,
+                _contextMenu$getBound = contextMenu.getBoundingClientRect(),
+                _contextMenu$getBound2 = _contextMenu$getBound.width,
+                menuHeight = _contextMenu$getBound2 === void 0 ? 0 : _contextMenu$getBound2,
+                _contextMenu$getBound3 = _contextMenu$getBound.height,
+                menuWidth = _contextMenu$getBound3 === void 0 ? 0 : _contextMenu$getBound3,
+                position = {},
+                x = evt.x,
+                y = evt.y,
+                _window = window,
+                width = _window.innerWidth,
+                height = _window.innerHeight;
+
+            position.maxWidth = numToPx(width);
+            position.maxHeight = numToPx(height);
+            position.left = placement(menuHeight, x, width);
+            position.top = placement(menuWidth, y, height);
+            Object.assign(contextMenu.style, position);
+
+            _this.$emit('contextmenu');
+          });
+        }
+      },
+      closeContextMenu: function closeContextMenu() {
+        this.visible = false;
+      },
+      getFirstElement: function getFirstElement() {
+        var slots = this.$slots["default"];
+
+        if (!Array.isArray(slots)) {
+          return null;
+        }
+
+        var element = null;
+
+        for (var index = 0; index < slots.length; index++) {
+          if (slots[index] && slots[index].tag) {
+            element = slots[index];
+          }
+        }
+
+        return element;
+      }
+    },
+    mounted: function mounted() {
+      this.$el.addEventListener('contextmenu', this.openContextMenu, true);
+    },
+    beforeCreate: function beforeCreate() {
+      this.popperVM = new Vue({
+        data: {
+          node: ''
+        },
+        render: function render(h) {
+          return this.node;
+        }
+      }).$mount();
+    },
+    render: function render(h) {
+      this.popperVM.node = h("transition", {
+        "attrs": {
+          "name": 'context-menu-fade'
+        }
+      }, [h("div", {
+        "attrs": {
+          "id": 'context-menu'
+        },
+        "class": [this.theme, 'context-menu'],
+        "ref": 'contextMenu',
+        "directives": [{
+          name: "show",
+          value: this.visible
+        }]
+      }, [this.$slots.contentMenu])]);
+      var firstElement = this.getFirstElement();
+
+      if (!firstElement) {
+        return null;
+      }
+
+      if (this.popperVM) {
+        document.body.appendChild(this.popperVM.$el);
+      }
+
+      return firstElement;
+    },
+    beforeDestroy: function beforeDestroy() {
+      document.body.removeChild(this.popperVM.$el);
+      this.popperVM && this.popperVM.$destroy();
+    },
+    destroyed: function destroyed() {
+      this.$el.removeEventListener('oncontextmenu', this.openContextMenu);
+    }
+  };
+
+  /* script */
+  const __vue_script__$2 = script$2;
+
+  /* template */
+
+    /* style */
+    const __vue_inject_styles__$2 = function (inject) {
+      if (!inject) return
+      inject("data-v-9b5f7a32_0", { source: "\n.context-menu[data-v-9b5f7a32] {\r\n    box-sizing: border-box;\r\n    position: fixed;\r\n    left: 0;\r\n    top: 0;\r\n    z-index: 100;\r\n    border-radius: 4px;\r\n    padding: 10px 0;\r\n    font-size: 12px;\r\n    line-height: 1.2;\r\n    min-width: 10px;\r\n    word-wrap: break-word;\n}\n.dark[data-v-9b5f7a32] {\r\n    background: #303133;\r\n    color: #fff;\n}\n.light[data-v-9b5f7a32] {\r\n    color: #303133;\r\n    background: #fff;\r\n    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);\r\n    border: 1px solid #d9d9d9;\n}\n.context-menu-fade-enter-active[data-v-9b5f7a32],\r\n.context-menu-fade-leave-active[data-v-9b5f7a32] {\r\n    transition: opacity 0.3s;\n}\n.context-menu-fade-enter[data-v-9b5f7a32],\r\n.context-menu-fade-leave-to[data-v-9b5f7a32] {\r\n    opacity: 0;\n}\r\n", map: {"version":3,"sources":["C:\\Users\\lxw\\Desktop\\codework\\v-contextMenu\\src\\components\\context-menu.vue"],"names":[],"mappings":";AAgHA;IACA,sBAAA;IACA,eAAA;IACA,OAAA;IACA,MAAA;IACA,YAAA;IACA,kBAAA;IACA,eAAA;IACA,eAAA;IACA,gBAAA;IACA,eAAA;IACA,qBAAA;AACA;AACA;IACA,mBAAA;IACA,WAAA;AACA;AACA;IACA,cAAA;IACA,gBAAA;IACA,wCAAA;IACA,yBAAA;AACA;AAEA;;IAEA,wBAAA;AACA;AACA;;IAEA,UAAA;AACA","file":"context-menu.vue","sourcesContent":["<script>\r\nimport Vue from 'vue';\r\nimport * as utils from '../utils/index.ts';\r\nexport default {\r\n    name: 'context-menu',\r\n    data() {\r\n        return {\r\n            visible: false,\r\n        };\r\n    },\r\n    props: {\r\n        theme: {\r\n            type: String,\r\n            default: 'light',\r\n            validator: function (value) {\r\n                return ['dark', 'light'].indexOf(value) !== -1;\r\n            },\r\n        },\r\n        disabled: {\r\n            type: Boolean,\r\n            default: false,\r\n        },\r\n    },\r\n    methods: {\r\n        openContextMenu(evt) {\r\n            evt.preventDefault();\r\n            if (this.visible) {\r\n                this.closeContextMenu();\r\n            } else {\r\n                if (this.disabled) return;\r\n                this.visible = true;\r\n                this.$nextTick(() => {\r\n                    let contextMenu = this.$refs.contextMenu,\r\n                        {\r\n                            width: menuHeight = 0,\r\n                            height: menuWidth = 0,\r\n                        } = contextMenu.getBoundingClientRect(),\r\n                        position = {},\r\n                        { x, y } = evt,\r\n                        { innerWidth: width, innerHeight: height } = window;\r\n                    position.maxWidth = utils.numToPx(width);\r\n                    position.maxHeight = utils.numToPx(height);\r\n                    position.left = utils.placement(menuHeight, x, width);\r\n                    position.top = utils.placement(menuWidth, y, height);\r\n                    Object.assign(contextMenu.style, position);\r\n                    this.$emit('contextmenu');\r\n                });\r\n            }\r\n        },\r\n\r\n        closeContextMenu() {\r\n            this.visible = false;\r\n        },\r\n        getFirstElement() {\r\n            const slots = this.$slots.default;\r\n            if (!Array.isArray(slots)) {\r\n                return null;\r\n            }\r\n            let element = null;\r\n            for (let index = 0; index < slots.length; index++) {\r\n                if (slots[index] && slots[index].tag) {\r\n                    element = slots[index];\r\n                }\r\n            }\r\n            return element;\r\n        },\r\n    },\r\n\r\n    mounted() {\r\n        this.$el.addEventListener('contextmenu', this.openContextMenu, true);\r\n    },\r\n    beforeCreate() {\r\n        this.popperVM = new Vue({\r\n            data: { node: '' },\r\n            render(h) {\r\n                return this.node;\r\n            },\r\n        }).$mount();\r\n    },\r\n    render(h) {\r\n        this.popperVM.node = (\r\n            <transition name='context-menu-fade'>\r\n                <div\r\n                    id='context-menu'\r\n                    class={[this.theme, 'context-menu']}\r\n                    ref='contextMenu'\r\n                    v-show={this.visible}\r\n                >\r\n                    {this.$slots.contentMenu}\r\n                </div>\r\n            </transition>\r\n        );\r\n        const firstElement = this.getFirstElement();\r\n        if (!firstElement) {\r\n            return null;\r\n        }\r\n        if (this.popperVM) {\r\n            document.body.appendChild(this.popperVM.$el);\r\n        }\r\n        return firstElement;\r\n    },\r\n    beforeDestroy() {\r\n        document.body.removeChild(this.popperVM.$el);\r\n        this.popperVM && this.popperVM.$destroy();\r\n    },\r\n    destroyed() {\r\n        this.$el.removeEventListener('oncontextmenu', this.openContextMenu);\r\n    },\r\n};\r\n</script>\r\n\r\n<style scoped>\r\n.context-menu {\r\n    box-sizing: border-box;\r\n    position: fixed;\r\n    left: 0;\r\n    top: 0;\r\n    z-index: 100;\r\n    border-radius: 4px;\r\n    padding: 10px 0;\r\n    font-size: 12px;\r\n    line-height: 1.2;\r\n    min-width: 10px;\r\n    word-wrap: break-word;\r\n}\r\n.dark {\r\n    background: #303133;\r\n    color: #fff;\r\n}\r\n.light {\r\n    color: #303133;\r\n    background: #fff;\r\n    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);\r\n    border: 1px solid #d9d9d9;\r\n}\r\n\r\n.context-menu-fade-enter-active,\r\n.context-menu-fade-leave-active {\r\n    transition: opacity 0.3s;\r\n}\r\n.context-menu-fade-enter,\r\n.context-menu-fade-leave-to {\r\n    opacity: 0;\r\n}\r\n</style>\r\n"]}, media: undefined });
+
+    };
+    /* scoped */
+    const __vue_scope_id__$2 = "data-v-9b5f7a32";
+    /* module identifier */
+    const __vue_module_identifier__$2 = undefined;
+    /* functional template */
+    const __vue_is_functional_template__$2 = undefined;
+    /* style inject SSR */
+    
+    /* style inject shadow dom */
+    
+
+    
+    const __vue_component__$2 = /*#__PURE__*/normalizeComponent(
+      {},
+      __vue_inject_styles__$2,
+      __vue_script__$2,
+      __vue_scope_id__$2,
+      __vue_is_functional_template__$2,
+      __vue_module_identifier__$2,
+      false,
+      createInjector,
+      undefined,
+      undefined
+    );
+
+  var plugin = {
+    install: function install(Vue) {
+      var prefix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+      Vue.component("".concat(prefix, "contextItem"), __vue_component__$1);
+      Vue.component("".concat(prefix, "contextMenu"), __vue_component__$2);
+    }
   };
 
   Vue.use(plugin);
   Vue.config.productionTip = false;
   Vue.config.devtools = true;
   new Vue({
-    render: (h) => h(__vue_component__),
+    render: function render(h) {
+      return h(__vue_component__);
+    }
   }).$mount('#app');
 
 }());

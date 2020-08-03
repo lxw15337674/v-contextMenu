@@ -1,8 +1,13 @@
-import test from './components/test.vue';
+import contextItem from './components/context-item';
+import contextMenu from './components/context-menu'
+export {
+    contextItem,
+    contextMenu
+}
 const plugin = {
-    install(Vue, options) {
-        const finalOptions = Object.assign({ refix: '', options })
-        Vue.component(`test`, test);
+    install(Vue, prefix = '') {
+        Vue.component(`${prefix}contextItem`, contextItem);
+        Vue.component(`${prefix}contextMenu`, contextMenu)
     },
 };
 export default plugin;

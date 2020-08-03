@@ -1,5 +1,4 @@
-export default plugin;
-declare namespace plugin {
-    export function install(Vue: any, options: any): void;
-    export function install(Vue: any, options: any): void;
-}
+import varType from './varType';
+import numToPx from './numToPx';
+import placement from './placement';
+export { varType, numToPx, placement };
