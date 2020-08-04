@@ -4,8 +4,7 @@
     "description": "",
     "author": "bhwa233 <404174262@qq.com>",
     "public": true,
-    "main": "src/index.js",
-    "module": "dist/index.js",
+    "main": "./dist/index.js",
     "keywords": [
         "vue",
         "context-menu"
