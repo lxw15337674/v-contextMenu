@@ -9,13 +9,6 @@ export default {
         };
     },
     props: {
-        theme: {
-            type: String,
-            default: 'light',
-            validator: function (value) {
-                return ['dark', 'light'].indexOf(value) !== -1;
-            },
-        },
         disabled: {
             type: Boolean,
             default: false,
@@ -109,8 +102,8 @@ export default {
 };
 </script>
 
-<style scoped>
-.context-menu {
+<style lang="stylus" scoped>
+.context-menu
     box-sizing: border-box;
     position: fixed;
     left: 0;
@@ -122,24 +115,17 @@ export default {
     line-height: 1.2;
     min-width: 10px;
     word-wrap: break-word;
-}
-.dark {
-    background: #303133;
-    color: #fff;
-}
-.light {
     color: #303133;
     background: #fff;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
     border: 1px solid #d9d9d9;
-}
 
 .context-menu-fade-enter-active,
-.context-menu-fade-leave-active {
+.context-menu-fade-leave-active
     transition: opacity 0.3s;
-}
+
 .context-menu-fade-enter,
-.context-menu-fade-leave-to {
+.context-menu-fade-leave-to
     opacity: 0;
-}
+
 </style>

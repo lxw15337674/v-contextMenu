@@ -1,10 +1,10 @@
 <template>
     <div class="app">
-        <contextMenu>
+        <contextMenu :theme="'dark'" >
             <div class="content">
               <div v-show="show">test</div>
             </div>
-            <template slot="contentMenu">
+            <template slot="contentMenu" >
                 <context-item
                     v-for="menuItem in contextMenu"
                     :key="menuItem.label"
@@ -37,12 +37,14 @@ export default {
                     label: '显示',
                     callback: this.toggle,
                     hotkey: 'enter',
-                  disabled: true,
                 },
                 {
                     label: '粘贴',
-                    callback: 'paste',
+                    callback: ()=>{
+                      console.log('粘贴')
+                    },
                     hotkey: 'ctrl+v',
+                  active:true,
                 },
                 {
                     label: '剪切',

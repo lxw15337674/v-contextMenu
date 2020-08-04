@@ -1,12 +1,12 @@
 <template>
-    <div>
+    <div >
         <div class="divided" v-if="divided"></div>
         <div
             v-hotkey="keymap"
             class="context-item"
             :class="{
                 'is-active': active,
-                'is-disabled': disabled,
+
             }"
             @click="handleClick"
         >
@@ -35,10 +35,6 @@ export default {
         },
         label: {
             type: String,
-        },
-        active: {
-            type: Boolean,
-            default: false,
         },
         autoHide: {
             type: Boolean,
@@ -95,9 +91,6 @@ borderColor = rgba(0,0,0,0.1)
 .is-disabled
     color:borderColor
     cursor: not-allowed
-.is-active
-  background-color:#46a0fc
-  color white
 .divided
     height: 1px;
     width: 100%;
