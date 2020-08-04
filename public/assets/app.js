@@ -7515,71 +7515,69 @@
   //
   //
   //
+  //
+  //
+  //
+  //
+  //
+  //
   var script = {
     name: 'App',
     data: function data() {
       return {
+        show: false,
         contextMenu: [{
-          label: '复制',
-          def: this.copy,
-          hotkey: 'ctrl+c'
+          label: '显示',
+          callback: this.toggle,
+          hotkey: 'enter',
+          disabled: true
         }, {
           label: '粘贴',
-          def: 'paste',
+          callback: 'paste',
           hotkey: 'ctrl+v'
-        } // {
-        //     label: '剪切',
-        //     def: 'cut',
-        //     hotkey: 'ctrl+x',
-        // },
-        // {
-        //     label: '撤销',
-        //     def: 'reverse',
-        //     hotkey: 'ctrl+z',
-        // },
-        // {
-        //     label: '重做',
-        //     def: 'reverse',
-        //     hotkey: 'ctrl+y',
-        //     disabled: false,
-        // },
-        // {
-        //     label: '清空选中区域',
-        //     def: 'clear',
-        //     divided: true,
-        //     hotkey: 'delete',
-        // },
-        // {
-        //     label: '上方插入一行',
-        //     def: 'insertRowUp',
-        // },
-        // {
-        //     label: '下方插入一行',
-        //     def: 'insertRowDown',
-        // },
-        // {
-        //     label: '删除所在行',
-        //     def: 'removeRows',
-        //     divided: true,
-        // },
-        // {
-        //     label: '左边插入一列',
-        //     def: 'insertColLeft',
-        // },
-        // {
-        //     label: '右边插入一列',
-        //     def: 'insertColRight',
-        // },
-        // {
-        //     label: '删除所在列',
-        //     def: 'removeCols',
-        // },
-        ]
+        }, {
+          label: '剪切',
+          callback: 'cut',
+          hotkey: 'ctrl+x'
+        }, {
+          label: '撤销',
+          callback: 'reverse',
+          hotkey: 'ctrl+z'
+        }, {
+          label: '重做',
+          callback: 'reverse',
+          hotkey: 'ctrl+y',
+          disabled: true
+        }, {
+          label: '清空选中区域',
+          callback: 'clear',
+          hotkey: 'delete'
+        }, {
+          divided: true,
+          label: '上方插入一行',
+          callback: 'insertRowUp'
+        }, {
+          label: '下方插入一行',
+          callback: 'insertRowDown'
+        }, {
+          label: '删除所在行',
+          callback: 'removeRows',
+          divided: true
+        }, {
+          label: '左边插入一列',
+          callback: 'insertColLeft'
+        }, {
+          label: '右边插入一列',
+          callback: 'insertColRight'
+        }, {
+          label: '删除所在列',
+          callback: 'removeCols'
+        }]
       };
     },
     methods: {
-      copy: function copy() {
-        console.log('copy');
+      toggle: function toggle() {
+        this.show = !this.show;
       }
     },
     mounted: function mounted() {}
@@ -7728,32 +7726,51 @@
         _c(
           "contextMenu",
           [
-            _c("div", { staticClass: "content" }),
+            _c("div", { staticClass: "content" }, [
+              _c(
+                "div",
+                {
+                  directives: [
+                    {
+                      name: "show",
+                      rawName: "v-show",
+                      value: _vm.show,
+                      expression: "show"
+                    }
+                  ]
+                },
+                [_vm._v("test")]
+              )
+            ]),
             _vm._v(" "),
             _c(
               "template",
               { slot: "contentMenu" },
               _vm._l(_vm.contextMenu, function(menuItem) {
-                return _c(
-                  "context-item",
-                  {
-                    key: menuItem.label,
-                    attrs: {
-                      divided: menuItem.divided,
-                      disabled: menuItem.disabled,
-                      active: menuItem.active,
-                      def: menuItem.def,
-                      hotkey: menuItem.hotkey
-                    }
+                return _c("context-item", {
+                  key: menuItem.label,
+                  attrs: {
+                    label: menuItem.label,
+                    divided: menuItem.divided,
+                    disabled: menuItem.disabled,
+                    active: menuItem.active,
+                    callback: menuItem.callback,
+                    hotkey: menuItem.hotkey
                   },
-                  [
-                    _c("span", {}, [_vm._v(_vm._s(menuItem.label))]),
-                    _vm._v(" "),
-                    _c("span", { staticClass: "fr" }, [
-                      _vm._v(_vm._s(_vm._f("hotKeyFilter")(menuItem.hotkey)))
-                    ])
-                  ]
-                )
+                  scopedSlots: _vm._u(
+                    [
+                      {
+                        key: "icon",
+                        fn: function() {
+                          return [_c("span", [_vm._v("icon")])]
+                        },
+                        proxy: true
+                      }
+                    ],
+                    null,
+                    true
+                  )
+                })
               }),
               1
             )
@@ -7770,11 +7787,11 @@
     /* style */
     const __vue_inject_styles__ = function (inject) {
       if (!inject) return
-      inject("data-v-40da5629_0", { source: ".content[data-v-40da5629] {\n  height: 100px;\n  border: 1px solid #f00;\n  width: 100px;\n}\n", map: {"version":3,"sources":["C:\\Users\\40417\\Desktop\\codeSpace\\vue\\v-contextMenu\\example\\App.vue","App.vue"],"names":[],"mappings":"AAkGA;EACA,aAAA;EACA,sBAAA;EACA,YAAA;ACjGA","file":"App.vue","sourcesContent":["<template>\r\n    <div class=\"app\">\r\n        <contextMenu>\r\n            <div class=\"content\"></div>\r\n            <template slot=\"contentMenu\">\r\n                <context-item\r\n                    v-for=\"menuItem in contextMenu\"\r\n                    :key=\"menuItem.label\"\r\n                    :divided=\"menuItem.divided\"\r\n                    :disabled=\"menuItem.disabled\"\r\n                    :active=\"menuItem.active\"\r\n                    :def=\"menuItem.def\"\r\n                    :hotkey=\"menuItem.hotkey\"\r\n                >\r\n                    <span class=\"\">{{ menuItem.label }}</span>\r\n                    <span class=\"fr\">{{ menuItem.hotkey | hotKeyFilter }}</span>\r\n                </context-item>\r\n            </template>\r\n        </contextMenu>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\nexport default {\r\n    name: 'App',\r\n    data: function () {\r\n        return {\r\n            contextMenu: [\r\n                {\r\n                    label: '复制',\r\n                    def: this.copy,\r\n                    hotkey: 'ctrl+c',\r\n                },\r\n                {\r\n                    label: '粘贴',\r\n                    def: 'paste',\r\n                    hotkey: 'ctrl+v',\r\n                },\r\n                // {\r\n                //     label: '剪切',\r\n                //     def: 'cut',\r\n                //     hotkey: 'ctrl+x',\r\n                // },\r\n                // {\r\n                //     label: '撤销',\r\n                //     def: 'reverse',\r\n                //     hotkey: 'ctrl+z',\r\n                // },\r\n                // {\r\n                //     label: '重做',\r\n                //     def: 'reverse',\r\n                //     hotkey: 'ctrl+y',\r\n                //     disabled: false,\r\n                // },\r\n                // {\r\n                //     label: '清空选中区域',\r\n                //     def: 'clear',\r\n                //     divided: true,\r\n                //     hotkey: 'delete',\r\n                // },\r\n                // {\r\n                //     label: '上方插入一行',\r\n                //     def: 'insertRowUp',\r\n                // },\r\n                // {\r\n                //     label: '下方插入一行',\r\n                //     def: 'insertRowDown',\r\n                // },\r\n                // {\r\n                //     label: '删除所在行',\r\n                //     def: 'removeRows',\r\n                //     divided: true,\r\n                // },\r\n                // {\r\n                //     label: '左边插入一列',\r\n                //     def: 'insertColLeft',\r\n                // },\r\n                // {\r\n                //     label: '右边插入一列',\r\n                //     def: 'insertColRight',\r\n                // },\r\n                // {\r\n                //     label: '删除所在列',\r\n                //     def: 'removeCols',\r\n                // },\r\n            ],\r\n        };\r\n    },\r\n    methods: {\r\n        copy() {\r\n            console.log('copy');\r\n        },\r\n    },\r\n    mounted() {},\r\n};\r\n</script>\r\n\r\n<style lang=\"stylus\" scoped>\r\n.content\r\n    height 100px\r\n    border 1px solid red\r\n    width 100px\r\n</style>\r\n",".content {\n  height: 100px;\n  border: 1px solid #f00;\n  width: 100px;\n}\n"]}, media: undefined });
+      inject("data-v-32fa4e18_0", { source: ".content[data-v-32fa4e18] {\n  height: 100px;\n  border: 1px solid #f00;\n  width: 100px;\n}\n", map: {"version":3,"sources":["C:\\Users\\lxw\\Desktop\\codework\\v-contextMenu\\example\\App.vue","App.vue"],"names":[],"mappings":"AA0GA;EACA,aAAA;EACA,sBAAA;EACA,YAAA;ACzGA","file":"App.vue","sourcesContent":["<template>\n    <div class=\"app\">\n        <contextMenu>\n            <div class=\"content\">\n              <div v-show=\"show\">test</div>\n            </div>\n            <template slot=\"contentMenu\">\n                <context-item\n                    v-for=\"menuItem in contextMenu\"\n                    :key=\"menuItem.label\"\n                    :label=\"menuItem.label\"\n                    :divided=\"menuItem.divided\"\n                    :disabled=\"menuItem.disabled\"\n                    :active=\"menuItem.active\"\n                    :callback=\"menuItem.callback\"\n                    :hotkey=\"menuItem.hotkey\"\n                >\n                  <template  v-slot:icon >\n                    <span>icon</span>\n                  </template>\n<!--                    <span class=\"\">{{ menuItem.label }}</span>-->\n<!--                    <span class=\"fr\">{{ menuItem.hotkey | hotKeyFilter }}</span>-->\n                </context-item>\n            </template>\n        </contextMenu>\n    </div>\n</template>\n\n<script>\nexport default {\n    name: 'App',\n    data: function () {\n        return {\n          show:false,\n            contextMenu: [\n                {\n                    label: '显示',\n                    callback: this.toggle,\n                    hotkey: 'enter',\n                  disabled: true,\n                },\n                {\n                    label: '粘贴',\n                    callback: 'paste',\n                    hotkey: 'ctrl+v',\n                },\n                {\n                    label: '剪切',\n                    callback: 'cut',\n                    hotkey: 'ctrl+x',\n                },\n                {\n                    label: '撤销',\n                    callback: 'reverse',\n                    hotkey: 'ctrl+z',\n                },\n                {\n                    label: '重做',\n                    callback: 'reverse',\n                    hotkey: 'ctrl+y',\n                    disabled: true,\n                },\n                {\n                    label: '清空选中区域',\n                    callback: 'clear',\n                    hotkey: 'delete',\n                },\n                {\n                  divided: true,\n                  label: '上方插入一行',\n                    callback: 'insertRowUp',\n                },\n                {\n                    label: '下方插入一行',\n                    callback: 'insertRowDown',\n                },\n                {\n                    label: '删除所在行',\n                    callback: 'removeRows',\n                    divided: true,\n                },\n                {\n                    label: '左边插入一列',\n                    callback: 'insertColLeft',\n                },\n                {\n                    label: '右边插入一列',\n                    callback: 'insertColRight',\n                },\n                {\n                    label: '删除所在列',\n                    callback: 'removeCols',\n                },\n            ],\n        };\n    },\n    methods: {\n        toggle() {\n            this.show=!this.show\n        },\n    },\n    mounted() {},\n};\n</script>\n\n<style lang=\"stylus\" scoped>\n.content\n    height 100px\n    border 1px solid red\n    width 100px\n</style>\n",".content {\n  height: 100px;\n  border: 1px solid #f00;\n  width: 100px;\n}\n"]}, media: undefined });
 
     };
     /* scoped */
-    const __vue_scope_id__ = "data-v-40da5629";
+    const __vue_scope_id__ = "data-v-32fa4e18";
     /* module identifier */
     const __vue_module_identifier__ = undefined;
     /* functional template */
@@ -8279,6 +8296,18 @@
       return numToPx(position);
   }
 
+  function hotKeyFilter(str) {
+      if (!str) {
+          return '';
+      }
+      return str
+          .split('+')
+          .map(function (item) {
+          return item.slice(0, 1).toUpperCase() + item.slice(1);
+      })
+          .join('+');
+  }
+
   //
   var script$1 = {
     name: 'context-item',
@@ -8291,6 +8320,9 @@
         type: Boolean,
         "default": false
       },
+      label: {
+        type: String
+      },
       active: {
         type: Boolean,
         "default": false
@@ -8299,7 +8331,7 @@
         type: Boolean,
         "default": true
       },
-      def: {
+      callback: {
         type: Function
       },
       hotkey: {
@@ -8308,30 +8340,28 @@
     },
     computed: {
       keymap: function keymap() {
-        // let obj = {};
-        // if (this.hotkey) {
-        //     obj[this.hotkey] = this.def;
-        // }
-        // return obj;
-        return {
-          enter: function enter() {
-            debugger;
-            console.log('delete');
-          }
-        };
+        var obj = {};
+
+        if (this.hotkey && !this.disabled) {
+          obj[this.hotkey] = this.callback;
+        }
+
+        return obj;
       }
+    },
+    filters: {
+      hotkeyFilter: hotKeyFilter
     },
     directives: {
       hotkey: vHotkey_common$1.directive
     },
     methods: {
       handleClick: function handleClick(event) {
-        debugger;
         var contextMenu = this.$parent.node.context;
 
         if (!this.disabled) {
-          if (typeJudgment(this.def) === 'function') {
-            this.def();
+          if (typeJudgment(this.callback) === 'function') {
+            this.callback();
           }
 
           if (this.autoHide) {
@@ -8353,6 +8383,8 @@
     var _h = _vm.$createElement;
     var _c = _vm._self._c || _h;
     return _c("div", [
+      _vm.divided ? _c("div", { staticClass: "divided" }) : _vm._e(),
+      _vm._v(" "),
       _c(
         "div",
         {
@@ -8362,8 +8394,7 @@
               rawName: "v-hotkey",
               value: _vm.keymap,
               expression: "keymap"
-            },
-            { name: "focus", rawName: "v-focus" }
+            }
           ],
           staticClass: "context-item",
           class: {
@@ -8372,11 +8403,19 @@
           },
           on: { click: _vm.handleClick }
         },
-        [_vm._t("default")],
+        [
+          _vm._t("default", [
+            _vm._t("icon"),
+            _vm._v(" "),
+            _c("span", { staticClass: "label" }, [_vm._v(_vm._s(_vm.label))]),
+            _vm._v(" "),
+            _c("span", { staticClass: "hotkey" }, [
+              _vm._v(_vm._s(_vm._f("hotkeyFilter")(_vm.hotkey)))
+            ])
+          ])
+        ],
         2
-      ),
-      _vm._v(" "),
-      _vm.divided ? _c("div", { staticClass: "divided" }) : _vm._e()
+      )
     ])
   };
   var __vue_staticRenderFns__$1 = [];
@@ -8385,11 +8424,11 @@
     /* style */
     const __vue_inject_styles__$1 = function (inject) {
       if (!inject) return
-      inject("data-v-fe86e1de_0", { source: ".context-item[data-v-fe86e1de] {\n  padding: 10px 16px;\n  cursor: pointer;\n  font-size: 14px;\n  min-width: 280px;\n}\n.context-item[data-v-fe86e1de]:not(.is-disabled):hover {\n  background-color: #f5f5f5;\n}\n.is-disabled[data-v-fe86e1de] {\n  color: rgba(0,0,0,0.1);\n  cursor: not-allowed;\n}\n.is-active[data-v-fe86e1de] {\n  background-color: #46a0fc;\n  color: #fff;\n}\n.divided[data-v-fe86e1de] {\n  height: 1px;\n  width: 100%;\n  margin: 6px 1px;\n  background: rgba(0,0,0,0.1);\n}\n", map: {"version":3,"sources":["C:\\Users\\40417\\Desktop\\codeSpace\\vue\\v-contextMenu\\src\\components\\context-item.vue","context-item.vue"],"names":[],"mappings":"AAsFA;EACA,kBAAA;EACA,eAAA;EACA,eAAA;EACA,gBAAA;ACrFA;ADsFA;EACA,yBAAA;ACpFA;ADqFA;EACA,sBAAA;EACA,mBAAA;ACnFA;ADoFA;EACA,yBAAA;EACA,WAAA;AClFA;ADmFA;EACA,WAAA;EACA,WAAA;EACA,eAAA;EACA,2BAAA;ACjFA","file":"context-item.vue","sourcesContent":["<template>\n    <div>\n        <div\n            v-hotkey=\"keymap\"\n            v-focus\n            class=\"context-item\"\n            :class=\"{\n                'is-active': active,\n                'is-disabled': disabled,\n            }\"\n            @click=\"handleClick\"\n        >\n            <slot></slot>\n        </div>\n        <div class=\"divided\" v-if=\"divided\"></div>\n    </div>\n</template>\n\n<script>\nimport { directive } from 'v-hotkey';\nimport * as utils from '../utils/index.ts';\nexport default {\n    name: 'context-item',\n    props: {\n        divided: {\n            type: Boolean,\n            default: false,\n        },\n        disabled: {\n            type: Boolean,\n            default: false,\n        },\n        active: {\n            type: Boolean,\n            default: false,\n        },\n        autoHide: {\n            type: Boolean,\n            default: true,\n        },\n        def: {\n            type: Function,\n        },\n        hotkey: {\n            type: String,\n        },\n    },\n    computed: {\n        keymap() {\n            // let obj = {};\n            // if (this.hotkey) {\n            //     obj[this.hotkey] = this.def;\n            // }\n            // return obj;\n            return {\n                enter: () => {\n                    debugger;\n                    console.log('delete');\n                },\n            };\n        },\n\n    },\n    directives: {\n        hotkey: directive,\n    },\n    methods: {\n        handleClick(event) {\n            debugger;\n            let contextMenu = this.$parent.node.context;\n            if (!this.disabled) {\n                if (utils.varType(this.def) === 'function') {\n                    this.def();\n                }\n                if (this.autoHide) {\n                    contextMenu.closeContextMenu();\n                }\n                this.$emit('click', this, event);\n            }\n        },\n    },\n};\n</script>\n\n<style lang=\"stylus\" scoped>\nborderColor = rgba(0,0,0,0.1)\n.context-item\n    padding: 10px 16px;\n    cursor: pointer;\n    font-size 14px\n    min-width 280px\n    &:not(.is-disabled):hover\n        background-color: #f5f5f5\n.is-disabled\n    color:borderColor\n    cursor: not-allowed\n.is-active\n  background-color:#46a0fc\n  color white\n.divided\n    height: 1px;\n    width: 100%;\n    margin: 6px 1px;\n    background: borderColor\n</style>\n",".context-item {\n  padding: 10px 16px;\n  cursor: pointer;\n  font-size: 14px;\n  min-width: 280px;\n}\n.context-item:not(.is-disabled):hover {\n  background-color: #f5f5f5;\n}\n.is-disabled {\n  color: rgba(0,0,0,0.1);\n  cursor: not-allowed;\n}\n.is-active {\n  background-color: #46a0fc;\n  color: #fff;\n}\n.divided {\n  height: 1px;\n  width: 100%;\n  margin: 6px 1px;\n  background: rgba(0,0,0,0.1);\n}\n"]}, media: undefined });
+      inject("data-v-392f8eb2_0", { source: ".context-item[data-v-392f8eb2] {\n  padding: 10px 30px 10px 16px;\n  cursor: pointer;\n  font-size: 14px;\n  min-width: 240px;\n}\n.context-item[data-v-392f8eb2]:not(.is-disabled):hover {\n  background-color: #f5f5f5;\n}\n.is-disabled[data-v-392f8eb2] {\n  color: rgba(0,0,0,0.1);\n  cursor: not-allowed;\n}\n.is-active[data-v-392f8eb2] {\n  background-color: #46a0fc;\n  color: #fff;\n}\n.divided[data-v-392f8eb2] {\n  height: 1px;\n  width: 100%;\n  margin: 6px 1px;\n  background: rgba(0,0,0,0.1);\n}\n.hotkey[data-v-392f8eb2] {\n  float: right;\n}\n", map: {"version":3,"sources":["C:\\Users\\lxw\\Desktop\\codework\\v-contextMenu\\src\\components\\context-item.vue","context-item.vue"],"names":[],"mappings":"AAuFA;EACA,4BAAA;EACA,eAAA;EACA,eAAA;EACA,gBAAA;ACtFA;ADuFA;EACA,yBAAA;ACrFA;ADsFA;EACA,sBAAA;EACA,mBAAA;ACpFA;ADqFA;EACA,yBAAA;EACA,WAAA;ACnFA;ADoFA;EACA,WAAA;EACA,WAAA;EACA,eAAA;EACA,2BAAA;AClFA;ADmFA;EACA,YAAA;ACjFA","file":"context-item.vue","sourcesContent":["<template>\n    <div>\n        <div class=\"divided\" v-if=\"divided\"></div>\n        <div\n            v-hotkey=\"keymap\"\n            class=\"context-item\"\n            :class=\"{\n                'is-active': active,\n                'is-disabled': disabled,\n            }\"\n            @click=\"handleClick\"\n        >\n            <slot >\n                <slot name=\"icon\"></slot>\n                <span class=\"label\">{{ label }}</span>\n                <span class=\"hotkey\">{{ hotkey | hotkeyFilter }}</span>\n            </slot>\n        </div>\n    </div>\n</template>\n\n<script>\nimport { directive } from 'v-hotkey';\nimport * as utils from '../utils/index.ts';\nexport default {\n    name: 'context-item',\n    props: {\n        divided: {\n            type: Boolean,\n            default: false,\n        },\n        disabled: {\n            type: Boolean,\n            default: false,\n        },\n        label: {\n            type: String,\n        },\n        active: {\n            type: Boolean,\n            default: false,\n        },\n        autoHide: {\n            type: Boolean,\n            default: true,\n        },\n        callback: {\n            type: Function,\n        },\n        hotkey: {\n            type: String,\n        },\n    },\n    computed: {\n        keymap() {\n            let obj = {};\n            if (this.hotkey && !this.disabled) {\n                obj[this.hotkey] = this.callback;\n            }\n            return obj;\n        },\n    },\n    filters: {\n        hotkeyFilter: utils.hotkeyFilter,\n    },\n    directives: {\n        hotkey: directive,\n    },\n    methods: {\n        handleClick(event) {\n            let contextMenu = this.$parent.node.context;\n            if (!this.disabled) {\n                if (utils.varType(this.callback) === 'function') {\n                    this.callback();\n                }\n                if (this.autoHide) {\n                    contextMenu.closeContextMenu();\n                }\n                this.$emit('click', this, event);\n            }\n        },\n    },\n};\n</script>\n\n<style lang=\"stylus\" scoped>\nborderColor = rgba(0,0,0,0.1)\n.context-item\n    padding: 10px 30px 10px 16px;\n    cursor: pointer;\n    font-size 14px\n    min-width 240px\n    &:not(.is-disabled):hover\n        background-color: #f5f5f5\n.is-disabled\n    color:borderColor\n    cursor: not-allowed\n.is-active\n  background-color:#46a0fc\n  color white\n.divided\n    height: 1px;\n    width: 100%;\n    margin: 6px 1px;\n    background: borderColor\n.hotkey\n  float right\n</style>\n",".context-item {\n  padding: 10px 30px 10px 16px;\n  cursor: pointer;\n  font-size: 14px;\n  min-width: 240px;\n}\n.context-item:not(.is-disabled):hover {\n  background-color: #f5f5f5;\n}\n.is-disabled {\n  color: rgba(0,0,0,0.1);\n  cursor: not-allowed;\n}\n.is-active {\n  background-color: #46a0fc;\n  color: #fff;\n}\n.divided {\n  height: 1px;\n  width: 100%;\n  margin: 6px 1px;\n  background: rgba(0,0,0,0.1);\n}\n.hotkey {\n  float: right;\n}\n"]}, media: undefined });
 
     };
     /* scoped */
-    const __vue_scope_id__$1 = "data-v-fe86e1de";
+    const __vue_scope_id__$1 = "data-v-392f8eb2";
     /* module identifier */
     const __vue_module_identifier__$1 = undefined;
     /* functional template */
@@ -8547,11 +8586,11 @@
     /* style */
     const __vue_inject_styles__$2 = function (inject) {
       if (!inject) return
-      inject("data-v-66321312_0", { source: "\n.context-menu[data-v-66321312] {\r\n    box-sizing: border-box;\r\n    position: fixed;\r\n    left: 0;\r\n    top: 0;\r\n    z-index: 100;\r\n    border-radius: 4px;\r\n    padding: 10px 0;\r\n    font-size: 12px;\r\n    line-height: 1.2;\r\n    min-width: 10px;\r\n    word-wrap: break-word;\n}\n.dark[data-v-66321312] {\r\n    background: #303133;\r\n    color: #fff;\n}\n.light[data-v-66321312] {\r\n    color: #303133;\r\n    background: #fff;\r\n    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);\r\n    border: 1px solid #d9d9d9;\n}\n.context-menu-fade-enter-active[data-v-66321312],\r\n.context-menu-fade-leave-active[data-v-66321312] {\r\n    transition: opacity 0.3s;\n}\n.context-menu-fade-enter[data-v-66321312],\r\n.context-menu-fade-leave-to[data-v-66321312] {\r\n    opacity: 0;\n}\r\n", map: {"version":3,"sources":["C:\\Users\\40417\\Desktop\\codeSpace\\vue\\v-contextMenu\\src\\components\\context-menu.vue"],"names":[],"mappings":";AAgHA;IACA,sBAAA;IACA,eAAA;IACA,OAAA;IACA,MAAA;IACA,YAAA;IACA,kBAAA;IACA,eAAA;IACA,eAAA;IACA,gBAAA;IACA,eAAA;IACA,qBAAA;AACA;AACA;IACA,mBAAA;IACA,WAAA;AACA;AACA;IACA,cAAA;IACA,gBAAA;IACA,wCAAA;IACA,yBAAA;AACA;AAEA;;IAEA,wBAAA;AACA;AACA;;IAEA,UAAA;AACA","file":"context-menu.vue","sourcesContent":["<script>\r\nimport Vue from 'vue';\r\nimport * as utils from '../utils/index.ts';\r\nexport default {\r\n    name: 'context-menu',\r\n    data() {\r\n        return {\r\n            visible: false,\r\n        };\r\n    },\r\n    props: {\r\n        theme: {\r\n            type: String,\r\n            default: 'light',\r\n            validator: function (value) {\r\n                return ['dark', 'light'].indexOf(value) !== -1;\r\n            },\r\n        },\r\n        disabled: {\r\n            type: Boolean,\r\n            default: false,\r\n        },\r\n    },\r\n    methods: {\r\n        openContextMenu(evt) {\r\n            evt.preventDefault();\r\n            if (this.visible) {\r\n                this.closeContextMenu();\r\n            } else {\r\n                if (this.disabled) return;\r\n                this.visible = true;\r\n                this.$nextTick(() => {\r\n                    let contextMenu = this.$refs.contextMenu,\r\n                        {\r\n                            width: menuHeight = 0,\r\n                            height: menuWidth = 0,\r\n                        } = contextMenu.getBoundingClientRect(),\r\n                        position = {},\r\n                        { x, y } = evt,\r\n                        { innerWidth: width, innerHeight: height } = window;\r\n                    position.maxWidth = utils.numToPx(width);\r\n                    position.maxHeight = utils.numToPx(height);\r\n                    position.left = utils.placement(menuHeight, x, width);\r\n                    position.top = utils.placement(menuWidth, y, height);\r\n                    Object.assign(contextMenu.style, position);\r\n                    this.$emit('contextmenu');\r\n                });\r\n            }\r\n        },\r\n\r\n        closeContextMenu() {\r\n            this.visible = false;\r\n        },\r\n        getFirstElement() {\r\n            const slots = this.$slots.default;\r\n            if (!Array.isArray(slots)) {\r\n                return null;\r\n            }\r\n            let element = null;\r\n            for (let index = 0; index < slots.length; index++) {\r\n                if (slots[index] && slots[index].tag) {\r\n                    element = slots[index];\r\n                }\r\n            }\r\n            return element;\r\n        },\r\n    },\r\n\r\n    mounted() {\r\n        this.$el.addEventListener('contextmenu', this.openContextMenu, true);\r\n    },\r\n    beforeCreate() {\r\n        this.popperVM = new Vue({\r\n            data: { node: '' },\r\n            render(h) {\r\n                return this.node;\r\n            },\r\n        }).$mount();\r\n    },\r\n    render(h) {\r\n        this.popperVM.node = (\r\n            <transition name='context-menu-fade'>\r\n                <div\r\n                    id='context-menu'\r\n                    class={[this.theme, 'context-menu']}\r\n                    ref='contextMenu'\r\n                    v-show={this.visible}\r\n                >\r\n                    {this.$slots.contentMenu}\r\n                </div>\r\n            </transition>\r\n        );\r\n        const firstElement = this.getFirstElement();\r\n        if (!firstElement) {\r\n            return null;\r\n        }\r\n        if (this.popperVM) {\r\n            document.body.appendChild(this.popperVM.$el);\r\n        }\r\n        return firstElement;\r\n    },\r\n    beforeDestroy() {\r\n        document.body.removeChild(this.popperVM.$el);\r\n        this.popperVM && this.popperVM.$destroy();\r\n    },\r\n    destroyed() {\r\n        this.$el.removeEventListener('oncontextmenu', this.openContextMenu);\r\n    },\r\n};\r\n</script>\r\n\r\n<style scoped>\r\n.context-menu {\r\n    box-sizing: border-box;\r\n    position: fixed;\r\n    left: 0;\r\n    top: 0;\r\n    z-index: 100;\r\n    border-radius: 4px;\r\n    padding: 10px 0;\r\n    font-size: 12px;\r\n    line-height: 1.2;\r\n    min-width: 10px;\r\n    word-wrap: break-word;\r\n}\r\n.dark {\r\n    background: #303133;\r\n    color: #fff;\r\n}\r\n.light {\r\n    color: #303133;\r\n    background: #fff;\r\n    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);\r\n    border: 1px solid #d9d9d9;\r\n}\r\n\r\n.context-menu-fade-enter-active,\r\n.context-menu-fade-leave-active {\r\n    transition: opacity 0.3s;\r\n}\r\n.context-menu-fade-enter,\r\n.context-menu-fade-leave-to {\r\n    opacity: 0;\r\n}\r\n</style>\r\n"]}, media: undefined });
+      inject("data-v-9b5f7a32_0", { source: "\n.context-menu[data-v-9b5f7a32] {\r\n    box-sizing: border-box;\r\n    position: fixed;\r\n    left: 0;\r\n    top: 0;\r\n    z-index: 100;\r\n    border-radius: 4px;\r\n    padding: 10px 0;\r\n    font-size: 12px;\r\n    line-height: 1.2;\r\n    min-width: 10px;\r\n    word-wrap: break-word;\n}\n.dark[data-v-9b5f7a32] {\r\n    background: #303133;\r\n    color: #fff;\n}\n.light[data-v-9b5f7a32] {\r\n    color: #303133;\r\n    background: #fff;\r\n    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);\r\n    border: 1px solid #d9d9d9;\n}\n.context-menu-fade-enter-active[data-v-9b5f7a32],\r\n.context-menu-fade-leave-active[data-v-9b5f7a32] {\r\n    transition: opacity 0.3s;\n}\n.context-menu-fade-enter[data-v-9b5f7a32],\r\n.context-menu-fade-leave-to[data-v-9b5f7a32] {\r\n    opacity: 0;\n}\r\n", map: {"version":3,"sources":["C:\\Users\\lxw\\Desktop\\codework\\v-contextMenu\\src\\components\\context-menu.vue"],"names":[],"mappings":";AAgHA;IACA,sBAAA;IACA,eAAA;IACA,OAAA;IACA,MAAA;IACA,YAAA;IACA,kBAAA;IACA,eAAA;IACA,eAAA;IACA,gBAAA;IACA,eAAA;IACA,qBAAA;AACA;AACA;IACA,mBAAA;IACA,WAAA;AACA;AACA;IACA,cAAA;IACA,gBAAA;IACA,wCAAA;IACA,yBAAA;AACA;AAEA;;IAEA,wBAAA;AACA;AACA;;IAEA,UAAA;AACA","file":"context-menu.vue","sourcesContent":["<script>\r\nimport Vue from 'vue';\r\nimport * as utils from '../utils/index.ts';\r\nexport default {\r\n    name: 'context-menu',\r\n    data() {\r\n        return {\r\n            visible: false,\r\n        };\r\n    },\r\n    props: {\r\n        theme: {\r\n            type: String,\r\n            default: 'light',\r\n            validator: function (value) {\r\n                return ['dark', 'light'].indexOf(value) !== -1;\r\n            },\r\n        },\r\n        disabled: {\r\n            type: Boolean,\r\n            default: false,\r\n        },\r\n    },\r\n    methods: {\r\n        openContextMenu(evt) {\r\n            evt.preventDefault();\r\n            if (this.visible) {\r\n                this.closeContextMenu();\r\n            } else {\r\n                if (this.disabled) return;\r\n                this.visible = true;\r\n                this.$nextTick(() => {\r\n                    let contextMenu = this.$refs.contextMenu,\r\n                        {\r\n                            width: menuHeight = 0,\r\n                            height: menuWidth = 0,\r\n                        } = contextMenu.getBoundingClientRect(),\r\n                        position = {},\r\n                        { x, y } = evt,\r\n                        { innerWidth: width, innerHeight: height } = window;\r\n                    position.maxWidth = utils.numToPx(width);\r\n                    position.maxHeight = utils.numToPx(height);\r\n                    position.left = utils.placement(menuHeight, x, width);\r\n                    position.top = utils.placement(menuWidth, y, height);\r\n                    Object.assign(contextMenu.style, position);\r\n                    this.$emit('contextmenu');\r\n                });\r\n            }\r\n        },\r\n\r\n        closeContextMenu() {\r\n            this.visible = false;\r\n        },\r\n        getFirstElement() {\r\n            const slots = this.$slots.default;\r\n            if (!Array.isArray(slots)) {\r\n                return null;\r\n            }\r\n            let element = null;\r\n            for (let index = 0; index < slots.length; index++) {\r\n                if (slots[index] && slots[index].tag) {\r\n                    element = slots[index];\r\n                }\r\n            }\r\n            return element;\r\n        },\r\n    },\r\n\r\n    mounted() {\r\n        this.$el.addEventListener('contextmenu', this.openContextMenu, true);\r\n    },\r\n    beforeCreate() {\r\n        this.popperVM = new Vue({\r\n            data: { node: '' },\r\n            render(h) {\r\n                return this.node;\r\n            },\r\n        }).$mount();\r\n    },\r\n    render(h) {\r\n        this.popperVM.node = (\r\n            <transition name='context-menu-fade'>\r\n                <div\r\n                    id='context-menu'\r\n                    class={[this.theme, 'context-menu']}\r\n                    ref='contextMenu'\r\n                    v-show={this.visible}\r\n                >\r\n                    {this.$slots.contentMenu}\r\n                </div>\r\n            </transition>\r\n        );\r\n        const firstElement = this.getFirstElement();\r\n        if (!firstElement) {\r\n            return null;\r\n        }\r\n        if (this.popperVM) {\r\n            document.body.appendChild(this.popperVM.$el);\r\n        }\r\n        return firstElement;\r\n    },\r\n    beforeDestroy() {\r\n        document.body.removeChild(this.popperVM.$el);\r\n        this.popperVM && this.popperVM.$destroy();\r\n    },\r\n    destroyed() {\r\n        this.$el.removeEventListener('oncontextmenu', this.openContextMenu);\r\n    },\r\n};\r\n</script>\r\n\r\n<style scoped>\r\n.context-menu {\r\n    box-sizing: border-box;\r\n    position: fixed;\r\n    left: 0;\r\n    top: 0;\r\n    z-index: 100;\r\n    border-radius: 4px;\r\n    padding: 10px 0;\r\n    font-size: 12px;\r\n    line-height: 1.2;\r\n    min-width: 10px;\r\n    word-wrap: break-word;\r\n}\r\n.dark {\r\n    background: #303133;\r\n    color: #fff;\r\n}\r\n.light {\r\n    color: #303133;\r\n    background: #fff;\r\n    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);\r\n    border: 1px solid #d9d9d9;\r\n}\r\n\r\n.context-menu-fade-enter-active,\r\n.context-menu-fade-leave-active {\r\n    transition: opacity 0.3s;\r\n}\r\n.context-menu-fade-enter,\r\n.context-menu-fade-leave-to {\r\n    opacity: 0;\r\n}\r\n</style>\r\n"]}, media: undefined });
 
     };
     /* scoped */
-    const __vue_scope_id__$2 = "data-v-66321312";
+    const __vue_scope_id__$2 = "data-v-9b5f7a32";
     /* module identifier */
     const __vue_module_identifier__$2 = undefined;
     /* functional template */

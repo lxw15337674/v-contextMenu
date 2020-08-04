@@ -1,8 +1,8 @@
 <template>
     <div>
+        <div class="divided" v-if="divided"></div>
         <div
             v-hotkey="keymap"
-            v-focus
             class="context-item"
             :class="{
                 'is-active': active,
@@ -10,9 +10,12 @@
             }"
             @click="handleClick"
         >
-            <slot></slot>
+            <slot >
+                <slot name="icon"></slot>
+                <span class="label">{{ label }}</span>
+                <span class="hotkey">{{ hotkey | hotkeyFilter }}</span>
+            </slot>
         </div>
-        <div class="divided" v-if="divided"></div>
     </div>
 </template>
 
@@ -30,6 +33,9 @@ export default {
             type: Boolean,
             default: false,
         },
+        label: {
+            type: String,
+        },
         active: {
             type: Boolean,
             default: false,
@@ -38,7 +44,7 @@ export default {
             type: Boolean,
             default: true,
         },
-        def: {
+        callback: {
             type: Function,
         },
         hotkey: {
@@ -48,23 +54,24 @@ export default {
     computed: {
         keymap() {
             let obj = {};
-            if (this.hotkey) {
-                obj[this.hotkey] = this.def;
+            if (this.hotkey && !this.disabled) {
+                obj[this.hotkey] = this.callback;
             }
             return obj;
         },
-
+    },
+    filters: {
+        hotkeyFilter: utils.hotkeyFilter,
     },
     directives: {
         hotkey: directive,
     },
     methods: {
         handleClick(event) {
-            debugger;
             let contextMenu = this.$parent.node.context;
             if (!this.disabled) {
-                if (utils.varType(this.def) === 'function') {
-                    this.def();
+                if (utils.varType(this.callback) === 'function') {
+                    this.callback();
                 }
                 if (this.autoHide) {
                     contextMenu.closeContextMenu();
@@ -79,10 +86,10 @@ export default {
 <style lang="stylus" scoped>
 borderColor = rgba(0,0,0,0.1)
 .context-item
-    padding: 10px 16px;
+    padding: 10px 30px 10px 16px;
     cursor: pointer;
     font-size 14px
-    min-width 280px
+    min-width 240px
     &:not(.is-disabled):hover
         background-color: #f5f5f5
 .is-disabled
@@ -96,4 +103,6 @@ borderColor = rgba(0,0,0,0.1)
     width: 100%;
     margin: 6px 1px;
     background: borderColor
+.hotkey
+  float right
 </style>

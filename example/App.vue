@@ -1,19 +1,25 @@
 <template>
     <div class="app">
         <contextMenu>
-            <div class="content"></div>
+            <div class="content">
+              <div v-show="show">test</div>
+            </div>
             <template slot="contentMenu">
                 <context-item
                     v-for="menuItem in contextMenu"
                     :key="menuItem.label"
+                    :label="menuItem.label"
                     :divided="menuItem.divided"
                     :disabled="menuItem.disabled"
                     :active="menuItem.active"
-                    :def="menuItem.def"
+                    :callback="menuItem.callback"
                     :hotkey="menuItem.hotkey"
                 >
-                    <span class="">{{ menuItem.label }}</span>
-                    <span class="fr">{{ menuItem.hotkey | hotKeyFilter }}</span>
+                  <template  v-slot:icon >
+                    <span>icon</span>
+                  </template>
+<!--                    <span class="">{{ menuItem.label }}</span>-->
+<!--                    <span class="fr">{{ menuItem.hotkey | hotKeyFilter }}</span>-->
                 </context-item>
             </template>
         </contextMenu>
@@ -25,70 +31,72 @@ export default {
     name: 'App',
     data: function () {
         return {
+          show:false,
             contextMenu: [
                 {
-                    label: '复制',
-                    def: this.copy,
-                    hotkey: 'ctrl+c',
+                    label: '显示',
+                    callback: this.toggle,
+                    hotkey: 'enter',
+                  disabled: true,
                 },
                 {
                     label: '粘贴',
-                    def: 'paste',
+                    callback: 'paste',
                     hotkey: 'ctrl+v',
                 },
-                // {
-                //     label: '剪切',
-                //     def: 'cut',
-                //     hotkey: 'ctrl+x',
-                // },
-                // {
-                //     label: '撤销',
-                //     def: 'reverse',
-                //     hotkey: 'ctrl+z',
-                // },
-                // {
-                //     label: '重做',
-                //     def: 'reverse',
-                //     hotkey: 'ctrl+y',
-                //     disabled: false,
-                // },
-                // {
-                //     label: '清空选中区域',
-                //     def: 'clear',
-                //     divided: true,
-                //     hotkey: 'delete',
-                // },
-                // {
-                //     label: '上方插入一行',
-                //     def: 'insertRowUp',
-                // },
-                // {
-                //     label: '下方插入一行',
-                //     def: 'insertRowDown',
-                // },
-                // {
-                //     label: '删除所在行',
-                //     def: 'removeRows',
-                //     divided: true,
-                // },
-                // {
-                //     label: '左边插入一列',
-                //     def: 'insertColLeft',
-                // },
-                // {
-                //     label: '右边插入一列',
-                //     def: 'insertColRight',
-                // },
-                // {
-                //     label: '删除所在列',
-                //     def: 'removeCols',
-                // },
+                {
+                    label: '剪切',
+                    callback: 'cut',
+                    hotkey: 'ctrl+x',
+                },
+                {
+                    label: '撤销',
+                    callback: 'reverse',
+                    hotkey: 'ctrl+z',
+                },
+                {
+                    label: '重做',
+                    callback: 'reverse',
+                    hotkey: 'ctrl+y',
+                    disabled: true,
+                },
+                {
+                    label: '清空选中区域',
+                    callback: 'clear',
+                    hotkey: 'delete',
+                },
+                {
+                  divided: true,
+                  label: '上方插入一行',
+                    callback: 'insertRowUp',
+                },
+                {
+                    label: '下方插入一行',
+                    callback: 'insertRowDown',
+                },
+                {
+                    label: '删除所在行',
+                    callback: 'removeRows',
+                    divided: true,
+                },
+                {
+                    label: '左边插入一列',
+                    callback: 'insertColLeft',
+                },
+                {
+                    label: '右边插入一列',
+                    callback: 'insertColRight',
+                },
+                {
+                    label: '删除所在列',
+                    callback: 'removeCols',
+                },
             ],
         };
     },
     methods: {
-        copy() {
-            console.log('copy');
+        toggle() {
+            this.show=!this.show
         },
     },
     mounted() {},
