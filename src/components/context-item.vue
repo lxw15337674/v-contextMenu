@@ -1,16 +1,15 @@
 <template>
-    <div >
+    <div>
         <div class="divided" v-if="divided"></div>
         <div
             v-hotkey="keymap"
             class="context-item"
             :class="{
                 'is-active': active,
-
             }"
             @click="handleClick"
         >
-            <slot >
+            <slot>
                 <slot name="icon"></slot>
                 <span class="label">{{ label }}</span>
                 <span class="hotkey">{{ hotkey | hotkeyFilter }}</span>
@@ -51,7 +50,10 @@ export default {
         keymap() {
             let obj = {};
             if (this.hotkey && !this.disabled) {
-                obj[this.hotkey] = this.callback;
+                obj[this.hotkey] = () => {
+                    this.closeContextMenu();
+                    this.callback();
+                };
             }
             return obj;
         },
@@ -63,15 +65,18 @@ export default {
         hotkey: directive,
     },
     methods: {
+        closeContextMenu() {
+            if (this.autoHide) {
+                let contextMenu = this.$parent.node.context;
+                contextMenu.closeContextMenu();
+            }
+        },
         handleClick(event) {
-            let contextMenu = this.$parent.node.context;
             if (!this.disabled) {
                 if (utils.varType(this.callback) === 'function') {
                     this.callback();
                 }
-                if (this.autoHide) {
-                    contextMenu.closeContextMenu();
-                }
+                this.closeContextMenu();
                 this.$emit('click', this, event);
             }
         },

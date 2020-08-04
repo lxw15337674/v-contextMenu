@@ -86,7 +86,7 @@ export default {
                     ref='contextMenu'
                     v-show={this.visible}
                 >
-                    {this.$slots.contentMenu}
+                    {this.$slots.contextMenu}
                 </div>
             </transition>
         );
@@ -104,7 +104,8 @@ export default {
         this.popperVM && this.popperVM.$destroy();
     },
     destroyed() {
-        this.$el.removeEventListener('mousedown', this.handleBodyClick, true);
+        this.$el.removeEventListener('contextmenu', this.handleBodyClick, true);
+        this.$el.removeEventListener('click', this.handleBodyClick, true);
     },
 };
 </script>

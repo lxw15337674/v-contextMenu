@@ -6,7 +6,7 @@
               <div >test</div>
               123123
             </div>
-            <template slot="contentMenu" >
+            <template slot="contextMenu" >
                 <context-item
                     v-for="menuItem in contextMenu"
                     :key="menuItem.label"
