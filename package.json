@@ -1,11 +1,11 @@
 {
-    "name": "@lxw15337674/vue-context-menu",
-    "version": "1.0.1-0",
+    "name": "@lxw15337674/v-context-menu",
+    "version": "1.0.1",
     "description": "",
     "author": "bhwa233 <404174262@qq.com>",
     "public": true,
-    "main": "dist/index.js",
-    "module": "/src/index.js",
+    "main": "src/index.js",
+    "module": "dist/index.js",
     "keywords": [
         "vue",
         "context-menu"
