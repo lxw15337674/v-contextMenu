@@ -15,30 +15,36 @@ export default {
         },
     },
     methods: {
-        openContextMenu(evt) {
-            evt.preventDefault();
-            if (this.visible) {
+        handleBodyClick(event) {
+            event.preventDefault();
+            if (event.button === 0) {
                 this.closeContextMenu();
-            } else {
-                if (this.disabled) return;
-                this.visible = true;
-                this.$nextTick(() => {
-                    let contextMenu = this.$refs.contextMenu,
-                        {
-                            width: menuHeight = 0,
-                            height: menuWidth = 0,
-                        } = contextMenu.getBoundingClientRect(),
-                        position = {},
-                        { x, y } = evt,
-                        { innerWidth: width, innerHeight: height } = window;
-                    position.maxWidth = utils.numToPx(width);
-                    position.maxHeight = utils.numToPx(height);
-                    position.left = utils.placement(menuHeight, x, width);
-                    position.top = utils.placement(menuWidth, y, height);
-                    Object.assign(contextMenu.style, position);
-                    this.$emit('contextmenu');
-                });
             }
+            if (event.button === 2) {
+                this.closeContextMenu();
+                this.openContextMenu(event);
+            }
+        },
+        openContextMenu(evt) {
+            if (this.disabled) return;
+            this.visible = true;
+            this.$nextTick(() => {
+                if (!this.$refs.contextMenu) return;
+                let contextMenu = this.$refs.contextMenu,
+                    {
+                        width: menuHeight = 0,
+                        height: menuWidth = 0,
+                    } = contextMenu.getBoundingClientRect(),
+                    position = {},
+                    { x, y } = evt,
+                    { innerWidth: width, innerHeight: height } = window;
+                position.maxWidth = utils.numToPx(width);
+                position.maxHeight = utils.numToPx(height);
+                position.left = utils.placement(menuHeight, x, width);
+                position.top = utils.placement(menuWidth, y, height);
+                Object.assign(contextMenu.style, position);
+                this.$emit('contextmenu');
+            });
         },
 
         closeContextMenu() {
@@ -60,7 +66,8 @@ export default {
     },
 
     mounted() {
-        this.$el.addEventListener('contextmenu', this.openContextMenu, true);
+        this.$el.addEventListener('contextmenu', this.handleBodyClick, true);
+        this.$el.addEventListener('click', this.handleBodyClick, true);
     },
     beforeCreate() {
         this.popperVM = new Vue({
@@ -97,7 +104,7 @@ export default {
         this.popperVM && this.popperVM.$destroy();
     },
     destroyed() {
-        this.$el.removeEventListener('oncontextmenu', this.openContextMenu);
+        this.$el.removeEventListener('mousedown', this.handleBodyClick, true);
     },
 };
 </script>
@@ -127,5 +134,4 @@ export default {
 .context-menu-fade-enter,
 .context-menu-fade-leave-to
     opacity: 0;
-
 </style>

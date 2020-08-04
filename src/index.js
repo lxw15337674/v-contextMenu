@@ -6,8 +6,8 @@ export {
 }
 const plugin = {
     install(Vue, prefix = '') {
-        Vue.component(`${prefix}contextItem`, contextItem);
-        Vue.component(`${prefix}contextMenu`, contextMenu)
+        Vue.component(`${prefix}ContextItem`, contextItem);
+        Vue.component(`${prefix}ContextMenu`, contextMenu)
     },
 };
 export default plugin;

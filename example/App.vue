@@ -1,8 +1,10 @@
 <template>
     <div class="app">
-        <contextMenu :theme="'dark'" >
+      <div class="button" @click="toggle">123</div>
+        <contextMenu :theme="'dark'" v-show="show">
             <div class="content">
-              <div v-show="show">test</div>
+              <div >test</div>
+              123123
             </div>
             <template slot="contentMenu" >
                 <context-item
