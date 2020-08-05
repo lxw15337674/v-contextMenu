@@ -1,27 +1,24 @@
 <template>
-    <div class="app">
-      <div class="button" @click="toggle">123</div>
-        <contextMenu :theme="'dark'" v-show="show">
+    <div id="app">
+        <div class="button" @click="toggle">123</div>
+        <contextMenu>
             <div class="content">
-              <div >test</div>
-              123123
+                <div>test</div>
+                123123
             </div>
-            <template slot="contextMenu" >
+            <template slot="contextMenu">
                 <context-item
                     v-for="menuItem in contextMenu"
                     :key="menuItem.label"
                     :label="menuItem.label"
                     :divided="menuItem.divided"
                     :disabled="menuItem.disabled"
-                    :active="menuItem.active"
                     :callback="menuItem.callback"
                     :hotkey="menuItem.hotkey"
                 >
-                  <template  v-slot:icon >
-                    <span>icon</span>
-                  </template>
-<!--                    <span class="">{{ menuItem.label }}</span>-->
-<!--                    <span class="fr">{{ menuItem.hotkey | hotKeyFilter }}</span>-->
+                    <template v-slot:icon>
+                        <span>icon</span>
+                    </template>
                 </context-item>
             </template>
         </contextMenu>
@@ -31,76 +28,31 @@
 <script>
 export default {
     name: 'App',
+
     data: function () {
         return {
-          show:false,
+            show: false,
             contextMenu: [
                 {
                     label: '显示',
                     callback: this.toggle,
                     hotkey: 'enter',
-                },
-                {
-                    label: '粘贴',
-                    callback: ()=>{
-                      console.log('粘贴')
-                    },
-                    hotkey: 'ctrl+v',
-                  active:true,
-                },
-                {
-                    label: '剪切',
-                    callback: 'cut',
-                    hotkey: 'ctrl+x',
-                },
-                {
-                    label: '撤销',
-                    callback: 'reverse',
-                    hotkey: 'ctrl+z',
-                },
-                {
-                    label: '重做',
-                    callback: 'reverse',
-                    hotkey: 'ctrl+y',
                     disabled: true,
                 },
                 {
-                    label: '清空选中区域',
-                    callback: 'clear',
-                    hotkey: 'delete',
-                },
-                {
-                  divided: true,
-                  label: '上方插入一行',
-                    callback: 'insertRowUp',
-                },
-                {
-                    label: '下方插入一行',
-                    callback: 'insertRowDown',
-                },
-                {
-                    label: '删除所在行',
-                    callback: 'removeRows',
-                    divided: true,
-                },
-                {
-                    label: '左边插入一列',
-                    callback: 'insertColLeft',
-                },
-                {
-                    label: '右边插入一列',
-                    callback: 'insertColRight',
-                },
-                {
-                    label: '删除所在列',
-                    callback: 'removeCols',
+                    label: '粘贴',
+                    callback: () => {
+                        console.log('粘贴');
+                    },
+                    hotkey: 'ctrl+v',
                 },
             ],
         };
     },
     methods: {
         toggle() {
-            this.show=!this.show
+            console.log('toggle');
+            this.show = !this.show;
         },
     },
     mounted() {},
@@ -109,7 +61,7 @@ export default {
 
 <style lang="stylus" scoped>
 .content
-    height 100px
-    border 1px solid red
-    width 100px
+  height 100px
+  border 1px solid red
+  width 100px
 </style>

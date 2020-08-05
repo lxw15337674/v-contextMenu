@@ -17,7 +17,7 @@ export default {
         }
       ]
     }),
-    vue({ css: true, compileTemplate: true }),
+    vue({ css: true}),
     typescript({
       tsconfig: 'tsconfig.json',
     }),

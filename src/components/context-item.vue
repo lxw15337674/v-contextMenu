@@ -4,9 +4,6 @@
         <div
             v-hotkey="keymap"
             class="context-item"
-            :class="{
-                'is-active': active,
-            }"
             @click="handleClick"
         >
             <slot>

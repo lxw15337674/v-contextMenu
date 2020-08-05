@@ -67,45 +67,53 @@ export default {
 
     mounted() {
         this.$el.addEventListener('contextmenu', this.handleBodyClick, true);
-        this.$el.addEventListener('click', this.handleBodyClick, true);
+        window.addEventListener('click', this.handleBodyClick, true);
     },
     beforeCreate() {
-        this.popperVM = new Vue({
-            data: { node: '' },
+        this.menuVm = new Vue({
+            data: { node: <div>test</div> },
             render(h) {
+              debugger
+                console.log(this.node)
                 return this.node;
             },
         }).$mount();
+        console.log(this.menuVm.$el)
     },
     render(h) {
-        this.popperVM.node = (
-            <transition name='context-menu-fade'>
-                <div
-                    id='context-menu'
-                    class={[this.theme, 'context-menu']}
-                    ref='contextMenu'
-                    v-show={this.visible}
-                >
-                    {this.$slots.contextMenu}
-                </div>
-            </transition>
-        );
+        // if (this.menuVm) {
+        //     this.menuVm.node = (
+        //         // <transition name='context-menu-fade'>
+        //         //     <div
+        //         //         id='context-menu'
+        //         //         class='context-menu'
+        //         //         ref='contextMenu'
+        //         //         v-show={this.visible}
+        //         //     >
+        //         //         {this.$slots.contextMenu}
+        //         //     </div>
+        //         // </transition>
+        //         <div>test</div>
+        //     );
+        // }
         const firstElement = this.getFirstElement();
         if (!firstElement) {
             return null;
         }
-        if (this.popperVM) {
-            document.body.appendChild(this.popperVM.$el);
+        if (this.menuVm) {
+            console.log(this.menuVm.$el)
+          debugger
+            document.body.appendChild(this.menuVm.$el);
         }
         return firstElement;
     },
     beforeDestroy() {
-        document.body.removeChild(this.popperVM.$el);
-        this.popperVM && this.popperVM.$destroy();
+        document.body.removeChild(this.menuVm.$el);
+        this.menuVm && this.menuVm.$destroy();
     },
     destroyed() {
         this.$el.removeEventListener('contextmenu', this.handleBodyClick, true);
-        this.$el.removeEventListener('click', this.handleBodyClick, true);
+        window.removeEventListener('click', this.handleBodyClick, true);
     },
 };
 </script>

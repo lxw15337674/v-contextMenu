@@ -4,7 +4,7 @@
     "description": "",
     "author": "bhwa233 <404174262@qq.com>",
     "public": true,
-    "main": "dist/index.js",
+    "main": "dist/main.js",
     "keywords": [
         "vue",
         "context-menu"
@@ -15,7 +15,8 @@
     },
     "scripts": {
         "start": "npm run dev ",
-        "build": "rollup -c build/rollup.build.js",
+        "build": "rollup -c build/rollup.build.js ",
+        "build:watch": "rollup -c build/rollup.build.js -w",
         "dev": "rollup -c build/rollup.dev.js -w "
     },
     "dependencies": {
@@ -23,15 +24,13 @@
         "vue": "^2.6.11"
     },
     "devDependencies": {
+        "babel-preset-vue": "^2.0.2",
         "@babel/core": "^7.10.5",
         "@babel/preset-env": "^7.10.4",
         "@rollup/plugin-alias": "^3.1.1",
         "@rollup/plugin-commonjs": "^13.0.2",
         "@rollup/plugin-node-resolve": "^8.4.0",
         "@rollup/plugin-replace": "^2.3.2",
-        "babel-helper-vue-jsx-merge-props": "^2.0.3",
-        "babel-plugin-syntax-jsx": "^6.18.0",
-        "babel-plugin-transform-vue-jsx": "^3.7.0",
         "babel-preset-env": "^1.7.0",
         "husky": "^4.2.3",
         "lint-staged": "^10.0.9",

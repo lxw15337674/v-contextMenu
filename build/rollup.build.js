@@ -1,13 +1,10 @@
 import base from './rollup.base'
 import { merge } from 'lodash'
 const config = merge(base, {
-  input: 'src/index.js',
-  plugins: [
-
-  ],
+  input: 'src/main.js',
   output: {
     exports: 'named',
-    file: 'dist/index.js',
+    file: 'dist/main.js',
     format: 'umd',
     name: 'index',
     assetFileNames: "[name]-[hash][extname]",
