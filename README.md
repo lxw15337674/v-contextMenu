@@ -24,114 +24,95 @@ Vue.use(contextMenu, 'g');
 或者按需引用
 
 ```javascript
-import {virtualScroller,virtualScrollerTable} from 'v-virtual-scroller';
+import {contextItem,contextMenu} from '@lxw15337674/v-context-menu';
 
 export default {
     name: 'App',
-    components: { virtualScroller，virtualScrollerTable },
+    components: { contextItem，contextMenu },
 }
 ```
 
-## virtual-scroller
+3. demo
 
-单向虚拟滚动组件
+```javascript
+    <contextMenu>
+            <div class="content">
+              本体内容
+            </div>
+            <template slot="contextMenu">
+                <context-item
+                    v-for="menuItem in contextMenu"
+                    :key="menuItem.label"
+                    :hotkey="menuItem.hotkey"
+					:divided="menuItem.divided"
+                    :disabled="menuItem.disabled"
+                    :callback="menuItem.callback"
+                    :hotkey="menuItem.hotkey"
+                >
+                </context-item>
+            </template>
+        </contextMenu>
 
-### 基本用法
-
-```html
-<template>
-<virtual-scroller :items="items" v-slot="{ index, size, active }">
-                <div>{{ index }}{{ size }} {{ active }}</div>
-  </virtual-scroller>
-</tempalte>
-<script>
-export default {
-    data() {
+data: function () {
         return {
-            items: [20, 20, 20, 20, 20],
+            contextMenu: [
+                {
+                    label: '显示',
+                    callback: () => {
+                        console.log('显示');
+                    },
+                    hotkey: 'enter',
+                    disabled: true,
+                },
+                {
+                    label: '粘贴',
+                    callback: () => {
+                        console.log('粘贴');
+                    },
+                    hotkey: 'ctrl+v',
+                },
+            ],
         };
     },
-};
-</script>
 ```
+
+
+
+## context-menu
+
+菜单主题
 
 
 ### 组件props参数
 
-| 参数      | 说明                       | 类型   | 是否必填 | 可选值                  | 默认值     |
-| --------- | -------------------------- | ------ | -------- | ----------------------- | ---------- |
-| items     | 元素长度集合（以px为单位） | array  | 是       |                         |            |
-| direction | 虚拟滚动方向               | string | 否       | `vertical`,`horizontal` | `vertical` |
-### 元素slot参数
-
-| 参数   | 说明             | 类型    |
-| ------ | ---------------- | ------- |
-| size   | 元素的长度       | number  |
-| index  | 元素在集合的位置 | number  |
-| active | 元素激活状态     | Boolean |
-
+| 参数     | 说明         | 类型    | 是否必填 | 可选值         | 默认值 |
+| -------- | ------------ | ------- | -------- | -------------- | ------ |
+| disabled | 是否禁用菜单 | Booelan | 否       | `true`/`false` | false  |
+|          |              |         |          |                |        |
 ### 组件事件
 
-| 参数   | 说明           | 回调参数 |
-| ------ | -------------- | -------- |
-| scroll | 列表滚动时触发 | 偏移值   |
-|        |                |          |
+| 参数  | 说明           | 回调参数 |
+| ----- | -------------- | -------- |
+| show  | 菜单显示时触发 |          |
+| close | 菜单关闭时触发 |          |
 
-## virtual-scroller-table
+## context-item
 
-同时支持横向纵向的虚拟滚动组件
-
-### 基本用法
-
-```html
-<template>
-    <virtual-scroller-table
-                            :cols="cols"
-                            :rows="rows"
-                            v-slot="{ rowIndex, colIndex, active }"
-                            >
-        <div>{{ colIndex }}{{ colIndex }} {{ active }}</div>
-    </virtual-scroller-table>
-</tempalte>
-<script>
-export default {
-    data() {
-        return {
-            rows: [20, 20, 20, 20, 20],
-            cols: [20, 20, 20, 20, 20]
-        };
-    },
-};
-</script>
-```
+菜单项
 
 ### 组件props参数
-| 参数 | 说明                         | 类型  | 是否必填 | 可选值 | 默认值 | 举例             |
-| ---- | ---------------------------- | ----- | -------- | ------ | ------ | ---------------- |
-| rows | 元素行长度集合（以px为单位） | array | 是       |        |        | [20,20,20,20,20] |
-| cols | 元素列长度集合（以px为单位） | array | 是       |        |        | [20,20,20,20,20] |
-|      |                              |       |          |        |        |                  |
-|      |                              |       |          |        |        |                  |
-### 元素slot参数
-
-| 参数     | 说明               | 类型    |
-| -------- | ------------------ | ------- |
-| rowIndex | 元素在行集合的位置 | number  |
-| colIndex | 元素在列集合的位置 | number  |
-| height   | 元素高度           | number  |
-| width    | 元素宽度           | number  |
-| active   | 元素激活状态       | Boolean |
+| 参数     | 说明                     | 类型          | 是否必填 | 可选值         | 默认值 | 举例   |
+| -------- | ------------------------ | ------------- | -------- | -------------- | ------ | ------ |
+| label    | 菜单项标题               | String/Number | 否       |                |        |        |
+| hotkey   | 功能快捷键               | String        | 否       |                |        | ctrl+c |
+| callback | 回调函数                 | Function      | 否       |                |        |        |
+| divided  | 是否在上方添加分隔符     | Boolean       | 否       | `true`/`false` | false  |        |
+| disabled | 是否禁用                 | Boolean       | 否       | `true`/`false` | false  |        |
+| autoHide | 被点击后菜单是否自动隐藏 | Boolean       | 否       | `true`/`false` | false  |        |
 ### 组件事件
 
-| 参数   | 说明           | 回调参数                                |
-| ------ | -------------- | --------------------------------------- |
-| scroll | 列表滚动时触发 | `left` ：横向偏移值， `top`：纵向偏移值 |
-|        |                |                                         |
-
-
-## 参考
-
-[再谈前端虚拟列表的实现](https://zhuanlan.zhihu.com/p/34585166)
-
-[无尽滚动的复杂度 -- 来自 Google 大神的拆解](https://juejin.im/post/58a3c81e128fe10058c57a8b#heading-1 )
+| 参数  | 说明               | 回调参数               |
+| ----- | ------------------ | ---------------------- |
+| click | 被点击时触发的事件 | 当前元素实例、点击事件 |
+|       |                    |                        |
 

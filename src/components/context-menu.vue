@@ -43,12 +43,13 @@ export default {
                 position.left = utils.placement(menuHeight, x, width);
                 position.top = utils.placement(menuWidth, y, height);
                 Object.assign(contextMenu.style, position);
-                this.$emit('contextmenu');
+                this.$emit('show');
             });
         },
 
         closeContextMenu() {
             this.visible = false;
+            this.$emit('close')
         },
         getFirstElement() {
             const slots = this.$slots.default;
@@ -71,38 +72,33 @@ export default {
     },
     beforeCreate() {
         this.menuVm = new Vue({
-            data: { node: <div>test</div> },
+            data: { node: '' },
             render(h) {
-              debugger
-                console.log(this.node)
-                return this.node;
+               //todo 这个地方不知道为什么必须要包裹才能正常渲染，直接返回this.node会渲染为空
+               return (<div>{this.node}</div>)
             },
         }).$mount();
-        console.log(this.menuVm.$el)
     },
     render(h) {
-        // if (this.menuVm) {
-        //     this.menuVm.node = (
-        //         // <transition name='context-menu-fade'>
-        //         //     <div
-        //         //         id='context-menu'
-        //         //         class='context-menu'
-        //         //         ref='contextMenu'
-        //         //         v-show={this.visible}
-        //         //     >
-        //         //         {this.$slots.contextMenu}
-        //         //     </div>
-        //         // </transition>
-        //         <div>test</div>
-        //     );
-        // }
+        if (this.menuVm) {
+            this.menuVm.node = (
+                <transition name='context-menu-fade'>
+                    <div
+                        id='context-menu'
+                        class='context-menu'
+                        ref='contextMenu'
+                        v-show={this.visible}
+                    >
+                        {this.$slots.contextMenu}
+                    </div>
+                </transition>
+            );
+        }
         const firstElement = this.getFirstElement();
         if (!firstElement) {
             return null;
         }
         if (this.menuVm) {
-            console.log(this.menuVm.$el)
-          debugger
             document.body.appendChild(this.menuVm.$el);
         }
         return firstElement;
