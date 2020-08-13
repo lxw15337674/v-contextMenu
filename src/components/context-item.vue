@@ -60,6 +60,7 @@ export default {
     methods: {
         closeContextMenu() {
             if (this.autoHide) {
+                //bug待修复。
                 this.$parent.closeContextMenu();
             }
         },
