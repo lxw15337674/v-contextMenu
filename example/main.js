@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import App from './App.vue';
-import contextMenu from '../';
+import contextMenu from '../src/main';
 Vue.use(contextMenu);
 Vue.config.productionTip = false;
 Vue.config.devtools = true;

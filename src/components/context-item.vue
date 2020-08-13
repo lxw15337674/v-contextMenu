@@ -1,11 +1,7 @@
 <template>
     <div>
         <div class="divided" v-if="divided"></div>
-        <div
-            v-hotkey="keymap"
-            class="context-item"
-            @click="handleClick"
-        >
+        <div v-hotkey="keymap" class="context-item" @click="handleClick">
             <slot>
                 <slot name="icon"></slot>
                 <span class="label">{{ label }}</span>
@@ -64,8 +60,7 @@ export default {
     methods: {
         closeContextMenu() {
             if (this.autoHide) {
-                let contextMenu = this.$parent.node.context;
-                contextMenu.closeContextMenu();
+                this.$parent.closeContextMenu();
             }
         },
         handleClick(event) {
