@@ -49,7 +49,7 @@ export default {
 
         closeContextMenu() {
             this.visible = false;
-            this.$emit('close')
+            this.$emit('close');
         },
         getFirstElement() {
             const slots = this.$slots.default;
@@ -71,16 +71,23 @@ export default {
         window.addEventListener('click', this.handleBodyClick, true);
     },
     beforeCreate() {
+        let that = this;
         this.menuVm = new Vue({
+            provide() {
+                return {
+                    $$contextmenu: that,
+                };
+            },
             data: { node: '' },
             render(h) {
-               //todo 这个地方不知道为什么必须要包裹才能正常渲染，直接返回this.node会渲染为空
-               return (<div>{this.node}</div>)
+                //todo 这个地方不知道为什么必须要包裹才能正常渲染，直接返回this.node会渲染为空
+                return <div>{this.node}</div>;
             },
         }).$mount();
     },
     render(h) {
         if (this.menuVm) {
+            // this.menuVm.provide = { $$contextmenu: this };
             this.menuVm.node = (
                 <transition name='context-menu-fade'>
                     <div

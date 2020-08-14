@@ -16,6 +16,7 @@ import { directive } from 'v-hotkey';
 import * as utils from '../utils/index.ts';
 export default {
     name: 'context-item',
+    inject: ['$$contextmenu'],
     props: {
         divided: {
             type: Boolean,
@@ -60,8 +61,7 @@ export default {
     methods: {
         closeContextMenu() {
             if (this.autoHide) {
-                //bug待修复。
-                this.$parent.closeContextMenu();
+                this.$$contextmenu.closeContextMenu();
             }
         },
         handleClick(event) {
