@@ -1,7 +1,14 @@
 <template>
     <div>
         <div class="divided" v-if="divided"></div>
-        <div v-hotkey="keymap" class="context-item" @click="handleClick">
+        <div
+            :class="{
+                'is-disabled': disabled,
+            }"
+            v-hotkey="keymap"
+            class="context-item"
+            @click="handleClick"
+        >
             <slot>
                 <slot name="icon"></slot>
                 <span class="label">{{ label }}</span>
@@ -16,7 +23,6 @@ import { directive } from 'v-hotkey';
 import * as utils from '../utils/index.ts';
 export default {
     name: 'context-item',
-    inject: ['$$contextmenu'],
     props: {
         divided: {
             type: Boolean,
@@ -33,9 +39,7 @@ export default {
             type: Boolean,
             default: true,
         },
-        callback: {
-            type: Function,
-        },
+        callback: {},
         hotkey: {
             type: String,
         },
@@ -43,11 +47,8 @@ export default {
     computed: {
         keymap() {
             let obj = {};
-            if (this.hotkey && !this.disabled) {
-                obj[this.hotkey] = () => {
-                    this.closeContextMenu();
-                    this.callback();
-                };
+            if (this.hotkey) {
+                obj[this.hotkey] = this.handleClick;
             }
             return obj;
         },
@@ -61,7 +62,7 @@ export default {
     methods: {
         closeContextMenu() {
             if (this.autoHide) {
-                this.$$contextmenu.closeContextMenu();
+                this.$parent.$vnode.context.closeContextMenu();
             }
         },
         handleClick(event) {

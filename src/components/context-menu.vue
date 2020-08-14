@@ -73,11 +73,6 @@ export default {
     beforeCreate() {
         let that = this;
         this.menuVm = new Vue({
-            provide() {
-                return {
-                    $$contextmenu: that,
-                };
-            },
             data: { node: '' },
             render(h) {
                 //todo 这个地方不知道为什么必须要包裹才能正常渲染，直接返回this.node会渲染为空
